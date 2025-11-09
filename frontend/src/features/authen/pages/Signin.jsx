@@ -9,7 +9,6 @@ export default function Signin() {
         <label>Nhập họ tên</label>
         <input type="text" placeholder="Họ và tên" required="" />
                 <label>Nhập email</label>
-
         <input type ="text" placeholder="Email" required="" />  
         <label >Nhập mật khẩu</label>
 

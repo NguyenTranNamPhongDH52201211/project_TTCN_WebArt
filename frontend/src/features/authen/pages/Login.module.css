@@ -73,15 +73,3 @@
   width: 10px;
   height: 10px;
 }
-#root{
-    display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-body{
-      height: 100vh; /* chiếm toàn chiều cao màn hình */
- display: flex;
-  justify-content: center;
-  align-items: center;
-}

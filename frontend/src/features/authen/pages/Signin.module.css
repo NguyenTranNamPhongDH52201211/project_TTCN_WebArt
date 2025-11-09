@@ -49,15 +49,4 @@
   background-color: #0056b3;
 }
 
-#root{
-    display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
-body{
-      height: 100vh; /* chiếm toàn chiều cao màn hình */
- display: flex;
-  justify-content: center;
-  align-items: center;
-}

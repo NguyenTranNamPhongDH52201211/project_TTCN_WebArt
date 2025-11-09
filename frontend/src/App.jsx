@@ -1,13 +1,11 @@
 
-import Login from "./features/authen/pages/Login.jsx"
-import Signin from "./features/authen/pages/Signin.jsx"
-import Forgot from "./features/authen/pages/Forgot.jsx"
+import Sidecart from "./features/Cart/pages/Sidecart"
 function App() {
 
   return (
     <>
 
-      <Forgot/>
+      <Sidecart/>
  
     </>
   )
