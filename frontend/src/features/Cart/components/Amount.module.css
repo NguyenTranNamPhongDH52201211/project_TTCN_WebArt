@@ -34,11 +34,12 @@
   background-color: #ff4d4f;
   color: white;
 }
-img{
-    width: 50px;
-    height: 50px;
-}
+
 
 .delete:hover {
   background-color: #ff1f1f;
+}
+img{
+  width: 25px;
+  height: 25px;
 }

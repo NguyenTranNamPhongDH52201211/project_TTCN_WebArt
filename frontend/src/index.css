@@ -2,17 +2,6 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
- 
-}
-#root{
-     display: flex;
-  justify-content: center;
-  align-items: center;
   width: 100%;
-}
-body{
-      height: 100vh; /* chiếm toàn chiều cao màn hình */
- display: flex;
-  justify-content: center;
-  align-items: center;
+   height: 100vh;    
 }

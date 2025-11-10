@@ -1,0 +1,23 @@
+.data-container td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+.data-container td div{
+display: flex;
+justify-content: center;
+align-items: center;
+gap:10px
+}
+.data-containertr:hover {
+  background-color: #f1f1f1;
+}
+
+.data-container td:nth-child(2) {
+  color: #28a745;
+  font-weight: bold;
+}
+.product-img{
+  width: 100px;
+  height: 100px;
+}
