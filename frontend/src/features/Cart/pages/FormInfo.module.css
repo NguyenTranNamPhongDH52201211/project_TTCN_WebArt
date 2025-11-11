@@ -1,0 +1,241 @@
+.container {
+ display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 1600px; /* đủ rộng khi zoom */
+  margin: 0 auto;
+  flex-wrap: wrap; /* xuống dòng khi hẹp */
+  align-items: flex-start;
+}
+
+.form-section,
+.summary-section {
+ background: #fff;
+  border-radius: 8px;
+  padding: 25px;
+  box-sizing: border-box;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+
+  /* CHỈNH CHO SCROLL NỘI BỘ */
+  max-height: 100vh; /* tối đa 90% chiều cao viewport */
+}
+
+.form-section:hover,
+.summary-section:hover {
+  transform: translateY(-3px);
+}
+
+.form-section {
+  flex: 1 1 0;
+  min-width: 320px;
+}
+
+.summary-section {
+  flex: 1 1 0;
+  min-width: 280px;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 20px; /* cách mép trên 20px */
+  max-height: calc(100vh - 40px); /* tránh quá cao */
+  overflow-y: auto; /* scroll nếu quá cao */
+}
+
+
+h3 {
+  margin-top: 0;
+  color: #007bff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+}
+
+input,
+select,
+textarea,
+button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0,123,255,0.3);
+}
+
+textarea {
+  resize: none;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.payment-method {
+  background: #f0f8ff;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.payment-method h4 {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #007bff;
+}
+
+/* container các payment option */
+.payment-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* mỗi option */
+.payment-options label {
+  flex: 1 1 calc(33% - 8px); /* 3 cột, tự co giãn */
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #fff;
+}
+
+/* ẩn radio */
+.payment-options input {
+  display: none;
+}
+
+.payment-options input:checked + label {
+  background-color: #28a745; /* xanh lá */
+  color: white;
+  border-color: #28a745;
+}
+/* hover label */
+.payment-options label:hover {
+  border-color: #007bff;
+  background-color: #e6f0ff;
+}
+
+/* responsive nhỏ màn hình */
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.total {
+  font-weight: bold;
+  font-size: 18px;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+  color: #ff7b00;
+}
+
+.product {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  background: #f9f9ff;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.product img {
+  width: 60px;
+  height: 60px;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.discount {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+  flex-shrink: 0;
+  
+}
+
+.discount input {
+  flex: 1 1 100%;
+  min-width: 180px;
+}
+
+.discount button {
+  flex: 1 1 100%;
+  padding: 10px 15px;
+  background-color: #ff7b00;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.discount button:hover {
+  background-color: #e66a00;
+}
+
+.note {
+  font-size: 13px;
+  color: #555;
+  background: #fff8e6;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 4px solid #ff7b00;
+}
+
+/* Giữ bố cục ổn định khi phóng to hoặc thu nhỏ */
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .discount {
+    flex-direction: column;
+  }
+
+  .discount input,
+  .discount button {
+    width: 100%;
+  }
+}
