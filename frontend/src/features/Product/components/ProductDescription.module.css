@@ -1,0 +1,20 @@
+.product-description {
+  flex-basis: 100%;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.product-description h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+  border-left: 4px solid #00a0e9;
+  padding-left: 10px;
+}
+
+.product-description p {
+  color: #555;
+  line-height: 1.6;
+  white-space: pre-line; /* giữ xuống dòng từ template string */
+}

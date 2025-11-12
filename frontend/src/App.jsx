@@ -5,11 +5,12 @@ import Signin from "./features/authen/pages/Signin"
 import Login from "./features/authen/pages/Login"
 import Sidecart from "./features/Cart/pages/Sidecart"
 import FormInfo from "./features/Cart/pages/FormInfo"
+import ProductDetail from "./features/Product/pages/ProductDetail"
 function App() {
 
   return (
     <>
-      <FormInfo/>
+      <ProductDetail/>
     </>
   )
 }

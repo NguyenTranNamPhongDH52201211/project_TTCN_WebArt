@@ -1,45 +1,59 @@
 .quantity-container {
   display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px;
-  border-radius: 5px;
+  align-items: center; /* căn giữa theo chiều dọc */
+  justify-content: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
   user-select: none;
+  transition: box-shadow 0.2s ease;
 }
 
+.quantity-container:hover {
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+}
+
+/* nút cộng/trừ */
 .btn {
-  width: 30px;
-  height: 30px;
-  font-size: 18px;
-  text-align: center;
-  line-height: 30px;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
   cursor: pointer;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 5px;
-  transition: background 0.2s;
+  color: #333;
+  transition: all 0.2s ease;
+  margin: 0;
 }
 
 .btn:hover {
-  background-color: #ddd;
+  background-color: #00a0e9;
+  color: #fff;
+  border-color: #00a0e9;
+  transform: translateY(-1px);
 }
 
+.btn:active {
+  transform: scale(0.95);
+}
+
+/* phần hiển thị số lượng */
 .quantity {
-  min-width: 20px;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;          /* cho đủ khoảng nhìn cân đối giữa 2 nút */
+  height: 36px;         /* bằng chiều cao nút */
   font-size: 16px;
-}
-
-.delete {
-  background-color: #ff4d4f;
-  color: white;
-}
-
-
-.delete:hover {
-  background-color: #ff1f1f;
-}
-img{
-  width: 25px;
-  height: 25px;
+  font-weight: 500;
+  color: #333;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #fff;
 }

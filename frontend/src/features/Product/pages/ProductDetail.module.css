@@ -1,0 +1,16 @@
+
+
+.container {
+  display: flex;
+flex-wrap: wrap;
+justify-content: center; /* căn ngang */
+align-items: center; /* căn dọc */
+min-height: 100vh; /* chiếm toàn màn hình theo chiều dọc */
+max-width: 900px;
+gap: 40px;
+margin: 0 auto;
+padding: 20px;
+box-sizing: border-box;
+margin-top: 80px;
+}
+

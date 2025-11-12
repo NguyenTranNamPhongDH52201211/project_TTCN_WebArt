@@ -1,0 +1,45 @@
+.color-options {
+  margin: 15px 0;
+}
+
+.color-options p {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* nhóm nút màu */
+.color-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* nút màu sắc */
+.color-buttons button {
+  border: 1.5px solid #ccc;
+  background: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+  width: 20%;
+  color: black;
+}
+
+/* hover nhẹ */
+.color-buttons button:hover {
+  border-color: #00a0e9;
+  color: #00a0e9;
+  transform: translateY(-2px);
+}
+
+/* nút được chọn */
+.color-buttons button.active {
+  border-color: #00a0e9;
+  background: #e6f7ff;
+  color: #00a0e9;
+  box-shadow: 0 0 0 2px #cceeff inset;
+  font-weight: 600;
+}

@@ -1,0 +1,29 @@
+.action{
+  margin-top: 30px;
+  display: flex;
+  gap:30px;
+}
+.out-of-stock, .add-to-cart,.payment  {
+    background-color: #1c7df4;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: not-allowed;
+    font-weight: bold;
+    width: 30%;
+}
+.product-description {
+  flex-basis: 100%;
+  margin-top: 30px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.product-description h2 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+  border-left: 4px solid #00a0e9;
+  padding-left: 10px;
+}
