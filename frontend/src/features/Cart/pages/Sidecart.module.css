@@ -15,7 +15,22 @@ h1 {
 }
 
 
-button:hover{
+
+.direct {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.styleButton{
+  width: 50%;
+  display: flex;
+  gap: 20px
+}
+.styleButton button {
+ width: 40%;
+}
+
+.styleButton button:hover {
   background-color: #007bff;
 }
 

@@ -1,0 +1,168 @@
+
+
+.profile-container {
+  display: flex;
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  border-right: 1px solid #eee;
+  padding: 30px 20px;
+}
+
+.sidebar h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.menu-item {
+  padding: 10px 0;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.menu-item:hover,
+.active {
+  color: #ee4d2d;
+  font-weight: bold;
+}
+
+/* Main content */
+.profile-content {
+  flex: 1;
+  padding: 30px 40px;
+}
+
+.profile-content h3 {
+  font-size: 20px;
+  color: #333;
+  margin-top: 0px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  width: 150px;
+  color: #555;
+  font-size: 14px;
+}
+
+.form-group input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Avatar */
+.avatar-section {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.avatar-preview {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #eee;
+  margin-right: 20px;
+
+  /* căn giữa chữ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.avatar-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.avatar-text {
+  color: #777;
+  font-size: 14px;
+  z-index: 1;
+}
+
+
+.upload-btn {
+  background: #ee4d2d;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.save-btn {
+  background: #ee4d2d;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.save-btn:hover {
+  background: #d7441e;
+}
+
+.logout-btn {
+  background: #aaa;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.logout-btn:hover {
+  background: #888;
+}
+
+@media (max-width: 768px) {
+  .profile-container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    text-align: center;
+  }
+
+  .form-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-group label {
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}

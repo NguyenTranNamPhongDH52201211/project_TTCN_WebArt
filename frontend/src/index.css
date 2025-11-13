@@ -1,7 +1,39 @@
+/* index.css */
+
+/* Đặt font và reset cơ bản */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  width: 100%;
-   height: 100vh;    
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+/* Reset toàn cục margin mặc định */
+*, *::before, *::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cấu hình root React */
+#root {
+min-height: 100vh;
+  display: flex;
+  justify-content: center; /* căn giữa ngang */
+  align-items: flex-start;  /* nội dung bắt đầu từ trên */
+  background: #fff;
+  padding-top: 40px;
+  box-sizing: border-box;
+}
+
+/* Nếu phần tử đầu tiên có margin-top mặc định */
+#root > *:first-child {
+  margin-top: 0 !important;
 }
