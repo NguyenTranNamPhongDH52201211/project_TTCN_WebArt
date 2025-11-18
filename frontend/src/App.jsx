@@ -10,12 +10,21 @@ import PersonalProfile from "./features/Profile/pages/PersonalProfile"
 import Categories from "./features/Categories/pages/Categories"
 import ProductList from "./features/Product/pages/ProductList"
 import OrderListCard from "./features/Order/pages/OrderListCard"
+import { Route,Routes } from "react-router"
 function App() {
 
   return (
-    <>
-      <OrderListCard/>
-  </>
+    <Routes>
+
+      {/* AUTH */}
+      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signin" element={<Signin />} />
+      <Route path="/forgot" element={<Forgot />} />
+
+      
+      
+    </Routes>
   )
 
 }
