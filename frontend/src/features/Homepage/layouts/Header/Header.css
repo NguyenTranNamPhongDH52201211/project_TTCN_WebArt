@@ -1,0 +1,57 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 48px;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+
+  position: fixed; /* luôn dính trên đầu */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px; /* điều chỉnh theo header thật */
+  z-index: 1000; /* luôn nổi trên nội dung */
+}
+
+.logo {
+  font-size: 40px;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  font-size: 22px;
+  color: #0e0e0e;
+  margin-left: 25px;
+  position: relative;
+  cursor: pointer;
+  
+}
+.icon:hover{
+  color:rgb(63, 63, 240);
+}
+
+.with-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom:4px;
+}
+
+
+.badge {
+  background-color: #ff4d4d;
+  color: #fff;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: -8px;
+  right: -8px;
+}

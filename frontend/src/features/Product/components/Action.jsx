@@ -1,5 +1,5 @@
 import styles from "./Action.module.css";
-
+import React from "react";
 export default function Action() {
   return (
     <div className={styles["action"]}>

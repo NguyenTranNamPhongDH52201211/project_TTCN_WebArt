@@ -1,6 +1,6 @@
 import styles from "./Maincart.module.css";
 import Table from "../components/Tabledata";
-
+import React from "react";
 export default function Maincart() {
   return (
     <div className={styles["container"]}>

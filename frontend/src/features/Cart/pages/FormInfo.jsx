@@ -6,6 +6,7 @@ import {
 } from "react-icons/fa";
 import { SiZalo } from "react-icons/si";
 import styles from "./FormInfo.module.css";
+import React from "react";
 export default function Info() {
   return (
     <div className={styles["container"]}>

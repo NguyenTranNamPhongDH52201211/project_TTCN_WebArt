@@ -1,5 +1,6 @@
 import styles from "./Sidecart.module.css";
 import Tabledata from "../components/Tabledata";
+import React from "react";
 export default function Sidecart() {
   return (
     <div className={styles["price-container"]}>

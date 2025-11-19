@@ -1,5 +1,5 @@
 import styles from "./ProductDescription.module.css";
-
+import React from "react";
 export default function ProductDescription(){
    const description = [
   "Cọ vẽ thư pháp Lobeo - Vân được thiết kế tinh tế với phần thân làm từ gỗ tự nhiên, đầu cọ mềm mịn, phù hợp cho các nét vẽ nghệ thuật, thư pháp hoặc vẽ minh họa.",

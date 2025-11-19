@@ -1,5 +1,5 @@
 import styles from "./Tabledata.module.css";
-
+import React from "react";
 import TData from "./TData.jsx";
 export default function Table() {
   return (

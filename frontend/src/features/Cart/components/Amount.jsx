@@ -1,5 +1,5 @@
 import styles from "./Amount.module.css"
-
+import React from "react";
 export default function Amount(){
     return (
     <div className={styles["quantity-container"]}>

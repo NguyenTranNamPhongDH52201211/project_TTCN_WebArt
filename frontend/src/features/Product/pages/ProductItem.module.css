@@ -1,0 +1,48 @@
+.card {
+  width: 200px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin: 10px 10px;
+
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.imageWrapper {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale 0.3s ease;
+}
+
+.card:hover .image {
+  scale: 1.05;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 10px 0 4px;
+  color: #333;
+}
+
+.price {
+  font-size: 14px;
+  font-weight: 500;
+  color: #007bff;
+  margin-bottom: 10px;
+}
