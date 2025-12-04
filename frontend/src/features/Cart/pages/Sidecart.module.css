@@ -1,0 +1,36 @@
+.price-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 50px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 20px 30px;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+
+
+.direct {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+.styleButton{
+  width: 50%;
+  display: flex;
+  gap: 20px
+}
+.styleButton button {
+ width: 40%;
+}
+
+.styleButton button:hover {
+  background-color: #007bff;
+}
+

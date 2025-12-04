@@ -1,0 +1,9 @@
+.content-container {
+
+  width: 100%;
+  max-width: 1200px; /* hoặc tùy chỉnh */
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px; /* khoảng cách giữa các block */
+}

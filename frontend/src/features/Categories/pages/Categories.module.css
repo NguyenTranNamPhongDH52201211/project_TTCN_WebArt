@@ -1,0 +1,84 @@
+.catalog {
+  width: 250px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 10px;
+  font-family: "Inter", sans-serif;
+  position: relative;
+}
+
+.catalog-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category-item {
+  position: relative;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}
+
+.category-item:hover {
+  background-color: #fff6f4;
+  color: #ee4d2d;
+}
+
+/* popup hiển thị bên phải */
+.subcategory-popup {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 220px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  list-style: none;
+  padding: 10px 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
+  z-index: 10;
+}
+
+/* khi hover vào danh mục chính => hiển thị submenu */
+.category-item:hover .subcategory-popup {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+/* từng item trong submenu */
+.subcategory-item {
+  padding: 8px 16px;
+  color: #333;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.subcategory-item:hover {
+  background-color: #ffe9e3;
+  color: #d43f00;
+  padding-left: 20px;
+}
+
+/* để popup khớp đúng vị trí với từng danh mục */
+.category-item:hover .subcategory-popup {
+  top: 0;
+}
