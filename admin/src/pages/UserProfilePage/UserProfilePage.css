@@ -1,0 +1,21 @@
+/* src/styles/Profile.css */
+.profile-container {
+  width: 100%;
+  padding: 1.5rem;
+ 
+  min-height: 100vh;
+}
+
+.breadcrumb {
+    text-align: right;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #1f2937;
+}

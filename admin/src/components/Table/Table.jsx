@@ -1,0 +1,71 @@
+// src/components/GenericTable.jsx
+import React, { useState } from 'react';
+import { Link } from "react-router-dom";
+import './Table.css';
+import { FiMoreHorizontal } from 'react-icons/fi';
+
+const Table = ({
+  columns, // Array of column definitions: { key: 'name', title: 'Name', render: (value, row) => ..., minWidth: '200px' }
+  data, // Array of data objects
+  showCheckbox = true, // Optional: Show checkbox column
+  showActions = true, // Optional: Show actions column with ...
+  onView, // Optional: (row) => ... handler for View
+  onDelete, // Optional: (row) => ... handler for Delete
+  idField = 'id' // FIX: Cho phép custom ID field (mặc định 'id')
+}) => {
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+
+  const toggleMenu = (index) => {
+    setOpenMenuIndex(openMenuIndex === index ? null : index);
+  };
+
+  return (
+    <div className="generic-list">
+      {/* Header */}
+      <div className="generic-row header">
+        {showCheckbox && <div className="cell checkbox"><input type="checkbox" /></div>}
+        {columns.map((col, index) => (
+          <div key={index} className={`cell ${col.key}`} style={{ minWidth: col.minWidth || '120px', flex: col.flex || 1 }}>
+            {col.title} {col.sortable && <span className="sort-icon">↑</span>}
+          </div>
+        ))}
+        {showActions && <div className="cell actions"></div>}
+      </div>
+
+      {/* Rows */}
+      {data.map((row, rowIndex) => (
+        <div className="generic-row" key={rowIndex}>
+          {showCheckbox && <div className="cell checkbox"><input type="checkbox" /></div>}
+          {columns.map((col, colIndex) => (
+            <div key={colIndex} className={`cell ${col.key}`} style={{ minWidth: col.minWidth || '120px', flex: col.flex || 1 }}>
+              {col.render ? col.render(row[col.key], row) : row[col.key]}
+            </div>
+          ))}
+          {showActions && (
+            <div className="cell actions">
+              <div className="actions-menu-container">
+                <FiMoreHorizontal className="more-icon" onClick={() => toggleMenu(rowIndex)} />
+                {openMenuIndex === rowIndex && (
+                  <div className="actions-dropdown">
+                    <p className="dropdown-item" onClick={() => { if (onView) onView(row); toggleMenu(rowIndex); }}>View</p>
+                    {/* FIX: Dùng idField để lấy đúng ID */}
+                    <Link 
+                      to={`/updateproductpage/${row[idField]}`} 
+                      className="dropdown-item update"
+                      onClick={() => toggleMenu(rowIndex)}
+                    >
+                      Update
+                    </Link>
+                    <p className="dropdown-item delete" onClick={() => { if (onDelete) onDelete(row); toggleMenu(rowIndex); }}>Delete</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default Table;

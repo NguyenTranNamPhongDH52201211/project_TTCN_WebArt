@@ -1,0 +1,43 @@
+import './App.css'
+import { Routes, Route } from "react-router-dom";
+
+import HomePage from './pages/HomePage/HomePage'
+import ProductPage from './pages/ProductPage/ProductPage'
+import AddProductPage from './pages/AddProductPage/AddProductPage'
+import UserProfilePage from './pages/UserProfilePage/UserProfilePage'
+import Sidebar from './layouts/SideBar/SideBar';
+import Header from './layouts/Header/Header';
+import UpdateProductPage from './pages/UpdateProductPage/UpdateProductPage';
+
+function App() {
+  
+    return (
+
+       <div style={{ display: 'flex', width: '100%' }}>
+      {/* Sidebar cố định bên trái */}
+      <div style={{ width: '15%', position: 'fixed', left: 0, top: 0, height: '100vh' }}>
+        <Sidebar />
+      </div>
+      
+      {/* Content bên phải */}
+      <div style={{ width: '85%', marginLeft: '15%' }}>
+        {/* Header ở trên cùng */}
+        <Header />
+        
+        {/* Nội dung các trang */}
+        <div style={{ padding: '20px' }}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/productpage" element={<ProductPage />} />
+            <Route path="/addproductpage" element={<AddProductPage />} />
+            <Route path="/updateproductpage/:id" element={<UpdateProductPage />} />
+            <Route path="/userprofilepage" element={<UserProfilePage />} />
+          </Routes>
+        </div>
+      </div>
+    </div>
+    
+  )
+}
+
+export default App
