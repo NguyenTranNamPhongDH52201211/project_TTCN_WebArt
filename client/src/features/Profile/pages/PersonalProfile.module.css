@@ -1,0 +1,38 @@
+
+
+.profile-container {
+  display: flex;
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  border-right: 1px solid #eee;
+  padding: 30px 20px;
+}
+
+.sidebar h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.menu-item {
+  padding: 10px 0;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.menu-item:hover,
+.active {
+  color: #ee4d2d;
+  font-weight: bold;
+}
+
+

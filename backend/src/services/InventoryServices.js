@@ -1,4 +1,4 @@
-const InventoryModel = require('../models/InventoryModule');
+const InventoryModel = require('../models/InventoryModel');
 
 class InventoryService {
 
