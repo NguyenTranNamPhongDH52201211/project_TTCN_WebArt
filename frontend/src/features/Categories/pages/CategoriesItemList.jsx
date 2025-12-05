@@ -10,7 +10,7 @@
       getProducts().then((data) => setProducts(data));
     }, []);
     const location = useLocation();
-    const { categoryId, subName } = location.state || {};
+const { categoryName, subName } = location.state || {};
     const filterProduct = (categoryId, subName) => {
       // Lọc theo category trước
       const productsByCategory = products.filter(

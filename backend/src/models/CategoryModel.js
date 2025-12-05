@@ -6,12 +6,21 @@ class CategoryModel{
             'SELECT cate_id, cate_name from category WHERE cate_parent_id IS NOT NULL');
         return rows;
     }
+  static async getType() {
+    const [rows] = await db.query(
+        "SELECT cate_id, cate_name FROM category WHERE cate_parent_id IS NULL"
+    );
+    return rows;
+}
 
     static async getById(id){
         const [rows] = await db.query('SELECT * FROM category WHERE cate_id= ?',[id]);
         return rows[0];
     }
-
+    static async getTypeById(id){
+        const [rows] = await db.query('SELECT * FROM category WHERE cate_parent_id= ?',[id]);
+        return rows;
+    }
     static async create(data){
         const[result]=await db.query("INSERT INTO category SET ?", [data]);
         return {result};

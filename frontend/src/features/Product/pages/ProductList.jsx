@@ -1,20 +1,18 @@
-import React,{useState,useEffect} from "react";
+import React from "react";
 import styles from "./ProductList.module.css";
 import ProductItem from "./ProductItem";
-import { getProducts } from "../../../data/product";
-export default function ProductList({itemAmount=20,filterArr=[]}) {
-  const [products, setProducts] = useState([]);
-  useEffect(() => {
-     getProducts().then((data) => setProducts(data));
 
-  }, []);
+export default function ProductList({ itemAmount = 20, filterArr = [] }) {
+  // Chỉ dùng filterArr
+  const itemList = filterArr.length !== 0 ? filterArr : [];
 
-  const arrList=products.slice(0,itemAmount);
-  const itemList=filterArr.length!=0?filterArr:arrList
+  // Nếu muốn giới hạn số lượng
+  const limitedList = itemList.slice(0, itemAmount);
+
   return (
     <div className={styles.container}>
-      {itemList.map((p, i) => (
-       <ProductItem key={i} i={i} p={p}/>
+      {limitedList.map((p, i) => (
+        <ProductItem key={i} i={i} p={p} />
       ))}
     </div>
   );
