@@ -2,7 +2,7 @@ import React from 'react';
 import './Footer.css';
 
 const Footer = ({
-  companyName,
+  logo,
   address,
   hotline,
   hours,
@@ -15,16 +15,21 @@ const Footer = ({
 }) => {
   return (
     <footer className="footer">
-      <div className="company-info">
-        <h1 className="company-name">{companyName}</h1>
-        <p className="address">Address: {address}</p>
-        <p className="hotline">Hotline: {hotline}</p>
-        <p className="hours">Hours: {hours}</p>
-        <p className="website">{website}</p>
-        <p className="legal">{legal}</p>
-      </div>
-      <div className="links-section">
-        <div className="column">
+      <div className="footer-container">
+
+        {/* Cột 1: Logo + thông tin công ty */}
+        <div className="footer-col">
+          <img src={logo} alt="Company Logo" className="footer-logo" />
+
+          <p className="footer-text">📍 {address}</p>
+          <p className="footer-text">📞 {hotline}</p>
+          <p className="footer-text">⏰ {hours}</p>
+          <p className="footer-text">{website}</p>
+          <p className="footer-legal">{legal}</p>
+        </div>
+
+        {/* Cột 2: Thông tin & Chính sách */}
+        <div className="footer-col">
           <h3>{policySection.title}</h3>
           <ul>
             {policySection.items.map((item, index) => (
@@ -32,7 +37,9 @@ const Footer = ({
             ))}
           </ul>
         </div>
-        <div className="column">
+
+        {/* Cột 3: Dịch vụ */}
+        <div className="footer-col">
           <h3>{serviceSection.title}</h3>
           <ul>
             {serviceSection.items.map((item, index) => (
@@ -40,17 +47,24 @@ const Footer = ({
             ))}
           </ul>
         </div>
-        <div className="fanpage-section">
+
+        {/* Cột 4: Fanpage */}
+        <div className="footer-col">
           <h3>{fanpage.title}</h3>
           <div className="fanpage-box">
             <img src={fanpage.imageSrc} alt={fanpage.name} className="fanpage-image" />
-            <p>{fanpage.name}</p>
-            <p>{fanpage.followers}</p>
-            <p>{fanpage.status}</p> {/* Assuming this is a status or additional text */}
+            <div className="fanpage-info">
+              <p className="fanpage-name">{fanpage.name}</p>
+              <p className="fanpage-followers">{fanpage.followers}</p>
+            </div>
           </div>
         </div>
+
       </div>
-      <div className="copyright">{copyright}</div>
+
+      <div className="footer-copy">
+        {copyright}
+      </div>
     </footer>
   );
 };

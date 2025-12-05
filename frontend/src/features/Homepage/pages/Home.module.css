@@ -1,14 +1,22 @@
-/* Home container giờ chỉ là phần nội dung giữa Header và Footer */
 .home-content {
   width: 100%;
-  max-width: 1200px; /* hoặc tùy chỉnh */
+  max-width: 1200px;
   padding: 20px 15px;
   display: flex;
   flex-direction: column;
-  gap: 30px; /* khoảng cách giữa các block */
+  gap: 35px;
 }
 
-/* Block cho từng section */
-.block {
-  width: 100%;
+.top-row {
+  display: flex;
+  gap: 22px;
+  align-items: stretch;
+}
+
+.top-row > :first-child {
+  flex: 1;
+}
+
+.top-row > :last-child {
+  flex: 2;
 }

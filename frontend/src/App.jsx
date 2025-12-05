@@ -5,7 +5,8 @@ import Signin from "./features/authen/pages/Signin";
 import Login from "./features/authen/pages/Login";
 import Sidecart from "./features/Cart/pages/Sidecart";
 import FormInfo from "./features/Cart/pages/FormInfo";
-import ProductDetail from "./features/Product/pages/ProductDetail";
+import ProductDetail from "./features/Product/pages/ProductDetail"; 
+import ProductCard from "./features/Product/pages/ProductCard";
 import PersonalProfile from "./features/Profile/pages/PersonalProfile";
 import Categories from "./features/Categories/pages/Categories";
 import ProductList from "./features/Product/pages/ProductList";
@@ -29,6 +30,8 @@ function App() {
         {/* Product */}
         <Route path="/productlist" element={<ProductList />}></Route>
         <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/productcart" element={<ProductCard />} />
+
         {/* Profile */}
         <Route path="/profile" element={<PersonalProfile />} />
         <Route path="/personalinfo" element={<PersonalInfo/>}></Route>

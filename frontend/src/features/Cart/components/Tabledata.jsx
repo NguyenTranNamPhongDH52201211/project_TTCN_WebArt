@@ -10,6 +10,7 @@ export default function Tabledata({ data }) {
           <th>Tên sản phẩm</th>
           <th>Giá</th>
           <th>Số lượng</th>
+          <th>Hành động</th>
         </tr>
       </thead>
 

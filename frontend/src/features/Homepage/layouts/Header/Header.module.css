@@ -19,8 +19,14 @@
   font-size: 40px;
   font-weight: bold;
   color: #333;
-cursor: pointer;}
-
+cursor: pointer;
+}
+.logo-img {
+  height: 80px;  
+        /* chỉnh kích thước logo */
+  width: auto;         /* giữ tỉ lệ ảnh */
+  object-fit: contain; /* chống méo hình */
+}
 .icons {
   display: flex;
   align-items: center;
@@ -39,19 +45,45 @@ cursor: pointer;}
 }
 
 .with-badge {
+  position: relative;  /* Để badge định vị theo icon */
   display: inline-flex;
   align-items: center;
-  margin-bottom:4px;
+  justify-content: center;
 }
 
-
 .badge {
+  position: absolute;
+  top: -6px;          /* chỉnh cao/thấp */
+  right: -12px;       /* chỉnh lệch trái/phải */
   background-color: #ff4d4d;
   color: #fff;
-  font-size: 16px;
+  font-size: 12px;
   padding: 2px 6px;
   border-radius: 50%;
-  position: absolute;
-  top: -8px;
-  right: -8px;
+  font-weight: bold;
+  min-width: 18px;
+  text-align: center;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.login-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.login-button:hover {
+  background: #1d4ed8;
+}
+
+.login-button:active {
+  transform: scale(0.96);
 }

@@ -4,13 +4,12 @@ import { getProducts } from "../data/product";
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
-
 export const CartProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
 
-useEffect(() => {
-  getProducts().then((data) => setProducts(data));
-}, []);
+  useEffect(() => {
+    getProducts().then((data) => setProducts(data));
+  }, []);
   const [appliedDiscount, setAppliedDiscount] = useState(null); // mã giảm giá đã áp dụng
   const [shippingFee, setShippingFee] = useState(0); // phí vận chuyển
   const [cartItems, setCartItems] = useState(() => {
@@ -104,7 +103,9 @@ useEffect(() => {
     }
     return Math.max(totalPrice - discountAmount + shippingFee, 0);
   };
-
+  const getCartCount = () => {
+    return cartItems.reduce((total, item) => total + item.qty, 0);
+  };
   return (
     <CartContext.Provider
       value={{
@@ -121,6 +122,7 @@ useEffect(() => {
         getFinalTotal,
         appliedDiscount,
         shippingFee,
+        getCartCount
       }}
     >
       {children}
