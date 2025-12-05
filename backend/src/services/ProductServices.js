@@ -1,0 +1,50 @@
+const  ProductModel = require('../models/ProductModel');
+const ImagesService = require('./ImagesServices');
+const ProductImagesModel= require ("../models/ProductImagesModel");
+
+
+class ProductService {
+  static async getAllProducts() {
+    return await ProductModel.getAll();
+  }
+
+  static async getProductDetails(id) {
+    const [product] = await ProductModel.getById(id);
+    if (!product) throw new Error("Product not found");
+    return product[0];
+  }
+
+   static async createProduct(data) {
+   
+    const productId = await ProductModel.create(data); 
+    return data.product_id || productId; 
+  }
+
+
+  static async updateProduct(id, data, files) {
+    const { images, ...productData } = data;
+
+    const [check] = await ProductModel.getById(id);
+    if (check.length === 0) throw new Error("Product not found");
+
+    await ProductModel.update(id, productData);
+
+    if (files && files.length > 0) {
+      await ProductImagesModel.deleteByProductId(id);
+
+      await ImagesService.uploadMultiple(id, files);
+    }
+
+    return { message: "Product updated successfully" };
+  }
+
+  static async deleteProduct(id) {
+    await ImagesService.deleteByProductId(id);
+    const deleted = await ProductModel.delete(id);
+    if (!deleted) throw new Error("Product not found");
+    return deleted;
+  }
+
+}
+
+module.exports = ProductService;

@@ -2,18 +2,30 @@ const db = require("../config/db"); // hoặc require nếu dùng CommonJS
 
 class ProductModel {
   static async getAll() {
-    // Lấy tất cả sản phẩm
-    const [rows] = await db.query(`SELECT 
-      p.product_id,
-      p.product_name,
-      p.product_base_price,
-      p.product_code,
-      p.product_brand,
-      c.cate_name AS category_name
-    FROM Product p
-    LEFT JOIN Category c ON p.product_category_id = c.cate_id`);
-    return rows;
+  // Lấy tất cả sản phẩm
+  const [rows] = await db.query(`SELECT 
+    p.product_id,
+    p.product_name,
+    p.product_base_price,
+    p.product_code,
+    p.product_brand,
+    i.invent_quantity_available AS product_stock,
+    c.cate_name AS category_name
+  FROM Product p
+  LEFT JOIN Category c ON p.product_category_id = c.cate_id
+  LEFT JOIN Inventory i ON i.invent_product_id = p.product_id`);
+
+  // ✅ THÊM: lấy ảnh cho từng sản phẩm
+  for (const product of rows) {
+    const [images] = await db.query(
+      "SELECT image_url FROM Product_Image WHERE image_product_id = ?",
+      [product.product_id]
+    );
+    product.images = images.map(img => img.image_url); // gán mảng ảnh vào mỗi sản phẩm
   }
+
+  return rows;
+}
 
   static async getById(id) {
     // Lấy sản phẩm theo id
