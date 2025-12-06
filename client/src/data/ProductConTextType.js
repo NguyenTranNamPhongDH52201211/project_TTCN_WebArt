@@ -12,7 +12,10 @@ export async function getCategories() {
         `http://localhost:3000/api/category/type/${p.cate_id}`
       );
       const children = Array.isArray(childRes.data)
-        ? childRes.data.map((c) => c.cate_name)
+        ? childRes.data.map((c) => ({
+            id: c.cate_id,   // lưu cate_id
+            title: c.cate_name // lưu cate_name
+          }))
         : []; // nếu không phải array thì gán rỗng
       return {
         id: p.cate_id,
@@ -22,5 +25,6 @@ export async function getCategories() {
     })
   );
 
-  return result; // chính là mảng bạn muốn
+
+  return result; // mảng cha con với cả id lẫn name
 }

@@ -19,9 +19,9 @@ export default function Categories() {
     load();
   }, []);
 
-  const handleSelect = (cateid,subName) => {
+  const handleSelect = (subCateId) => {
     navigate("/categoriesitemlist", {
-      state: { CategoryId:cateid ,subName },
+      state: { subCategoryId:subCateId },
     });
   };
 
@@ -35,13 +35,13 @@ export default function Categories() {
 
             {/* hiển thị submenu */}
             <ul className={styles["subcategory-popup"]}>
-              {cat.children.map((name,i) => (
+              {cat.children.map((obj,i) => (
                 <li
                   key={i}
                   className={styles["subcategory-item"]}
-                  onClick={() => handleSelect(cat.id,name)}
+                  onClick={() => handleSelect(obj.id)}
                 >
-                  {name}
+                  {obj.title}
                 </li>
               ))}
             </ul>

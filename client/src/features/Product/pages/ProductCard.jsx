@@ -15,8 +15,8 @@ export default function ProductCard({ product }) {
       <div className={styles.imageWrapper}>
         <img
           src={
-            product.image && product.image.trim() !== ""
-              ? product.image
+            product.image && product.image.length > 0 && product.image[0] !== ""
+              ? product.image[0]
               : noimage
           }
           alt={product.name}

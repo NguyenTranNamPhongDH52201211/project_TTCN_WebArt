@@ -4,11 +4,11 @@ class CategoryServices {
   static async getAllCate() {
     return await CategoryModel.getAll();
   }
-  static async getAllCateType() {
-    return await CategoryModel.getType();
+  static async getAllParentType() {
+    return await CategoryModel.getAllParentType();
   }
-  static async getAllSubCateByType(id) {
-    return await CategoryModel.getTypeById(id);
+  static async getSubTypeByParentId(id) {
+    return await CategoryModel.getSubTypeByParentId(id);
   }
   static async getCateDetails(id) {
     const [cate] = await CategoryModel.getById(id);

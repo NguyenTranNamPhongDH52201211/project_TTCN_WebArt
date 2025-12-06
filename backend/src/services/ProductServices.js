@@ -1,7 +1,6 @@
-const  ProductModel = require('../models/ProductModel');
-const ImagesService = require('./ImagesServices');
-const ProductImagesModel= require ("../models/ProductImagesModel");
-
+const ProductModel = require("../models/productModel");
+const ImagesService = require("./ImagesServices");
+const ProductImagesModel = require("../models/ProductImagesModel");
 
 class ProductService {
   static async getAllProducts() {
@@ -13,13 +12,13 @@ class ProductService {
     if (!product) throw new Error("Product not found");
     return product[0];
   }
-
-   static async createProduct(data) {
-   
-    const productId = await ProductModel.create(data); 
-    return data.product_id || productId; 
+  static async getfilterByParentOfChild(id) {
+    return await ProductModel.filterByParentOfChild(id);
   }
-
+  static async createProduct(data) {
+    const productId = await ProductModel.create(data);
+    return data.product_id || productId;
+  }
 
   static async updateProduct(id, data, files) {
     const { images, ...productData } = data;
@@ -44,7 +43,6 @@ class ProductService {
     if (!deleted) throw new Error("Product not found");
     return deleted;
   }
-
 }
 
 module.exports = ProductService;

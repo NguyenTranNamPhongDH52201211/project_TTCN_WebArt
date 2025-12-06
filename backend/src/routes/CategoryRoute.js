@@ -3,8 +3,8 @@ const router=express.Router();
 const CategoryController= require('../controllers/CategoryController');
 
 router.get("/", CategoryController.getAll);
-router.get("/type", CategoryController.getAllType);
-router.get("/type/:id", CategoryController.getTypeById);
+router.get("/type", CategoryController.getAllParentType);
+router.get("/type/:id", CategoryController.getSubTypeByParentId);
 
 router.get("/:id", CategoryController.getById);
 router.post("/", CategoryController.create);
