@@ -7,13 +7,15 @@ import { AuthContext } from "../../../../context/AuthContext";
 import { useCart } from "../../../../context/CartContext"; // import CartContext
 
 export default function Header({
-  logoText,
+  logo,
   searchPlaceholder,
   favoritesCount,
-  cartCount,
+ 
 }) {
-  const { user } = useContext(AuthContext);
-  const { toggleSideCart } = useCart(); // lấy hàm mở/đóng SideCart
+const { user } = useContext(AuthContext);
+  const { toggleSideCart, getCartCount } = useCart();
+
+  const cartCount = getCartCount();
   const navigate = useNavigate();
 
   const handleLogoClick = () => navigate("/");
@@ -25,17 +27,19 @@ export default function Header({
   return (
     <header className={styles["header"]}>
       <div className={styles["logo"]} onClick={handleLogoClick}>
-        {logoText}
+        <img src={logo} alt="Logo" className={styles["logo-img"]} />
       </div>
 
       <SearchBar placeholder={searchPlaceholder} />
 
       <div className={styles["icons"]}>
         {!user && (
-          <Link to="/login" className={styles["login-link"]}>
+          <Link to="/login" className={styles["login-button"]}>
+            <FaUser style={{ fontSize: "14px" }} />
             Đăng nhập
           </Link>
         )}
+
         <Link to="/profile" className={styles["icon"]}>
           <FaUser />
         </Link>

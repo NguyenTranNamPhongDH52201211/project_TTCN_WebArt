@@ -14,3 +14,22 @@ box-sizing: border-box;
 margin-top: 80px;
 }
 
+.loading {
+  width: 100%;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  color: #555;
+  animation: fade 0.8s ease-in-out infinite alternate;
+}
+
+/* Hiệu ứng mờ mờ nhấp nháy cho "Đang tải..." */
+@keyframes fade {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}

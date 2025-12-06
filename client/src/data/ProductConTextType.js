@@ -1,37 +1,30 @@
-export const categories = [
-  {
-    id: "but-co",
-    title: "BÚT VẼ, CỌ VẼ",
-    children: ["Bút Đi Nét", "Cọ Vẽ", "Bút Gel", "Bút Sắt", "Bút Lông Mực"],
-  },
-  {
-    id: "mau-ve",
-    title: "MÀU VẼ",
-    children: ["Màu Nước", "Marker", "Màu Chì", "Acrylic", "Sơn Dầu"],
-  },
-  {
-    id: "giay-ve",
-    title: "GIẤY VẼ",
-    children: ["Giấy Vẽ", "Sổ Vẽ", "Canvas", "Bảng Vải"],
-  },
-  {
-    id: "phac-thao",
-    title: "PHÁC THẢO",
-    children: ["Bút Chì", "Than Chì", "Ngòi Chì", "Tẩy", "Thước"],
-  },
-  {
-    id: "thu-cong",
-    title: "THỦ CÔNG (DIY)",
-    children: ["Dụng Cụ Cắt", "Giấy Trang Trí", "Nguyên Liệu DIY"],
-  },
-  {
-    id: "phu-tro",
-    title: "DỤNG CỤ BỔ TRỢ",
-    children: ["Khay Pha Màu", "Giá Vẽ", "Bình Rửa Cọ", "Túi Đựng Cọ"],
-  },
-  {
-    id: "van-phong",
-    title: "VĂN PHÒNG PHẨM",
-    children: ["Sổ Tay", "Bút Viết", "Dụng Cụ Học Tập", "Sticker", "Washi Tape"],
-  },
-];
+import axios from "axios";
+
+export async function getCategories() {
+  // 1. Lấy danh sách category cha (cate_parent_id IS NULL)
+  const parentRes = await axios.get("http://localhost:3000/api/category/type");
+  const parents = parentRes.data;
+
+  // 2. Gộp children vào
+  const result = await Promise.all(
+    parents.map(async (p) => {
+      const childRes = await axios.get(
+        `http://localhost:3000/api/category/type/${p.cate_id}`
+      );
+      const children = Array.isArray(childRes.data)
+        ? childRes.data.map((c) => ({
+            id: c.cate_id,   // lưu cate_id
+            title: c.cate_name // lưu cate_name
+          }))
+        : []; // nếu không phải array thì gán rỗng
+      return {
+        id: p.cate_id,
+        title: p.cate_name,
+        children: children,
+      };
+    })
+  );
+
+
+  return result; // mảng cha con với cả id lẫn name
+}

@@ -1,39 +1,36 @@
-import React from "react"; // Thêm dòng này
+import React, { useState, useEffect } from "react";
 import styles from "./CategoriesItemList.module.css";
-import { products } from "../../../data/product";
 import ProductList from "../../Product/pages/ProductList";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { formatProducts } from "../../../data/customeProductfield";
 const CategoriesItemList = () => {
+  const [products, setProducts] = useState([]);
   const location = useLocation();
-  const { categoryId, subName } = location.state || {};
-  const filterProduct = (categoryId, subName) => {
-    // Lọc theo category trước
-    const productsByCategory = products.filter(
-      (item) => item.category === categoryId
-    );
+  const { subCategoryId } = location.state || {};
 
-    // Lọc tiếp theo subName dựa trên các từ đầu tiên
-    const filtered = productsByCategory.filter((item) => {
-      // Lấy số từ của subName
-      const subNameWords = subName.trim().split(/\s+/);
-      // Lấy số từ tương ứng của item.name
-      const itemWords = item.name
-        .trim()
-        .split(/\s+/)
-        .slice(0, subNameWords.length);
-      // So sánh các từ đầu
-      return (
-        itemWords.join(" ").toLowerCase() ===
-        subNameWords.join(" ").toLowerCase()
-      );
-    });
+  useEffect(() => {
+    if (!subCategoryId) return;
 
-    return filtered;
-  };
+    async function fetchProducts() {
+      try {
+        const res = await axios.get(
+          `http://localhost:3000/api/products/filter/${subCategoryId}`
+        );
+        const formatted = formatProducts(res.data); // dùng helper để format dữ liệu
+        setProducts(formatted);
+      } catch (error) {
+        console.error("Lỗi khi load sản phẩm:", error);
+      }
+    }
+
+    fetchProducts();
+  }, [subCategoryId]);
+
   return (
     <div className={styles["content-container"]}>
       <div className={styles["block"]}>
-        <ProductList filterArr={filterProduct(categoryId,subName)} />
+        <ProductList filterArr={products} />
       </div>
     </div>
   );

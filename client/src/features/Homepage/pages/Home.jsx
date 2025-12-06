@@ -1,22 +1,35 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styles from "./Home.module.css";
-import Categories from '../../Categories/pages/Categories';
-import ProductList from '../../Product/pages/ProductList';
-import { products } from '../../../data/product';
+
+import Categories from "../../Categories/pages/Categories";
+import ProductList from "../../Product/pages/ProductList";
+import FeaturedSlider from "./FeaturedSlider";
+
+import { getProducts } from "../../../data/product";
 import { SearchContext } from "../../../context/SearchContext";
 
 const Home = () => {
+  const [products, setProducts] = useState([]);
   const { keyword } = useContext(SearchContext);
 
-  // Lọc sản phẩm dựa trên keyword, không phân biệt chữ hoa/thường
+  useEffect(() => {
+    getProducts().then((data) => setProducts(data));
+  }, []);
+
   const filterArr = keyword
-    ? products.filter(p => p.name.toLowerCase().includes(keyword.toLowerCase()))
-    : [];
+    ? products.filter((p) =>
+        p.name.toLowerCase().includes(keyword.toLowerCase())
+      )
+    : products;
 
   return (
-    <div className={styles['home-content']}>
-      <Categories className={styles['block']} />
-      <ProductList className={styles['block']} filterArr={filterArr} />
+    <div className={styles["home-content"]}>
+      <div className={styles["top-row"]}>
+        <Categories />
+        <FeaturedSlider />
+      </div>
+
+      <ProductList filterArr={filterArr} />
     </div>
   );
 };

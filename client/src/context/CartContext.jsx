@@ -1,11 +1,15 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { products } from "../data/product";
-import { discounts } from "../data/discount";
+import { getProducts } from "../data/product";
 
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    getProducts().then((data) => setProducts(data));
+  }, []);
   const [appliedDiscount, setAppliedDiscount] = useState(null); // mã giảm giá đã áp dụng
   const [shippingFee, setShippingFee] = useState(0); // phí vận chuyển
   const [cartItems, setCartItems] = useState(() => {
@@ -24,16 +28,12 @@ export const CartProvider = ({ children }) => {
       const exist = prev.find((x) => x.id === id);
       if (exist) {
         // Thay vì chỉ +1, cộng với qty truyền vào
-        return prev.map((x) =>
-          x.id === id ? { ...x, qty: x.qty + qty } : x
-        );
+        return prev.map((x) => (x.id === id ? { ...x, qty: x.qty + qty } : x));
       }
       return [...prev, { id, qty }]; // thêm mới với qty truyền vào
     });
     setSideCartOpen(true);
   };
-
-
 
   const removeFromCart = (id) => {
     setCartItems((prev) => prev.filter((x) => x.id !== id));
@@ -57,12 +57,13 @@ export const CartProvider = ({ children }) => {
     );
   };
   const decreaseQty = (id) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) =>
-          item.id === id ? { ...item, qty: item.qty - 1 } : item
-        )
-        .filter((item) => item.qty > 0) // loại bỏ sản phẩm qty = 0
+    setCartItems(
+      (prev) =>
+        prev
+          .map((item) =>
+            item.id === id ? { ...item, qty: item.qty - 1 } : item
+          )
+          .filter((item) => item.qty > 0) // loại bỏ sản phẩm qty = 0
     );
   };
 
@@ -75,7 +76,7 @@ export const CartProvider = ({ children }) => {
   // Thêm hàm này vào bên trong CartProvider, cùng với getDetailedCart
   const getTotalPrice = () => {
     return cartItems.reduce((total, item) => {
-      const product = products.find(p => p.id == item.id);
+      const product = products.find((p) => p.id == item.id);
       if (!product) return total;
       const price = parsePrice(product.price);
       const qty = Number(item.qty) || 0;
@@ -83,7 +84,7 @@ export const CartProvider = ({ children }) => {
     }, 0);
   };
   const applyDiscount = (code) => {
-    const discountObj = discounts.find(d => d.code === code.toUpperCase());
+    const discountObj = discounts.find((d) => d.code === code.toUpperCase());
     if (discountObj) {
       setAppliedDiscount(discountObj);
       return true; // áp dụng thành công
@@ -102,7 +103,9 @@ export const CartProvider = ({ children }) => {
     }
     return Math.max(totalPrice - discountAmount + shippingFee, 0);
   };
-
+  const getCartCount = () => {
+    return cartItems.reduce((total, item) => total + item.qty, 0);
+  };
   return (
     <CartContext.Provider
       value={{
@@ -116,7 +119,10 @@ export const CartProvider = ({ children }) => {
         decreaseQty,
         getTotalPrice,
         applyDiscount,
-        getFinalTotal, appliedDiscount, shippingFee,
+        getFinalTotal,
+        appliedDiscount,
+        shippingFee,
+        getCartCount
       }}
     >
       {children}

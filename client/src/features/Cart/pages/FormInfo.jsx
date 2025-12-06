@@ -31,6 +31,10 @@ export default function Info() {
       alert("Mã giảm giá không hợp lệ!");
     }
   };
+function formatVND(amount) {
+  if (!amount) return "0 vn₫";
+  return amount.toLocaleString("vi-VN") + " vn₫";
+}
 
   return (
     <div className={styles["container"]}>
@@ -158,33 +162,33 @@ export default function Info() {
           </button>
         </div>
 
-        <div className={styles["summary-item"]}>
-          <span>Tạm tính</span>
-          <span>{getTotalPrice().toLocaleString()}₫</span>
-        </div>
+       <div className={styles["summary-item"]}>
+  <span>Tạm tính</span>
+  <span>{formatVND(getTotalPrice())}</span>
+</div>
 
-        <div className={styles["summary-item"]}>
-          <span>Phí vận chuyển</span>
-          <span>{shippingFee.toLocaleString()}₫</span>
-        </div>
+<div className={styles["summary-item"]}>
+  <span>Phí vận chuyển</span>
+  <span>{formatVND(shippingFee)}</span>
+</div>
 
         <p className={styles["note"]}>
           Quý khách vui lòng quay video khi nhận hàng để đảm bảo quyền lợi nếu
           có phát sinh khiếu nại. Mọi thắc mắc xin liên hệ qua Fanpage Facebook
           hoặc số điện thoại hỗ trợ.
         </p>
-        {appliedDiscount && (
-          <div className={styles["summary-item"]}>
-            <span>Giảm giá ({appliedDiscount.code})</span>
-            <span>
-              -{((subtotal * appliedDiscount.value) / 100).toLocaleString()}₫
-            </span>
-          </div>
-        )}
-        <div className={`${styles["total"]} ${styles["summary-item"]}`}>
-          <span>TỔNG CỘNG</span>
-          <span>{getFinalTotal().toLocaleString()}₫</span>
-        </div>
+       {appliedDiscount && (
+  <div className={styles["summary-item"]}>
+    <span>Giảm giá ({appliedDiscount.code})</span>
+    <span>
+      -{formatVND((subtotal * appliedDiscount.value) / 100)}
+    </span>
+  </div>
+)}
+       <div className={`${styles["total"]} ${styles["summary-item"]}`}>
+  <span>TỔNG CỘNG</span>
+  <span>{formatVND(getFinalTotal())}</span>
+</div>
       </div>
     </div>
   );
