@@ -63,6 +63,15 @@ class ProductModel {
     return rows;
   }
 
+  static async getById(id) {
+    // Lấy sản phẩm theo id
+    const rows = await db.query("SELECT * FROM product WHERE product_id = ?", [
+      id,
+    ]);
+
+    return rows;
+  }
+
   static async create(data) {
     try {
       // MySQL có thể không chấp nhận insertId với UUID
