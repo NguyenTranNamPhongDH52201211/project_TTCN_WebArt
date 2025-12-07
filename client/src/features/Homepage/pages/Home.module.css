@@ -1,0 +1,22 @@
+.home-content {
+  width: 100%;
+  max-width: 1200px;
+  padding: 20px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+.top-row {
+  display: flex;
+  gap: 22px;
+  align-items: stretch;
+}
+
+.top-row > :first-child {
+  flex: 1;
+}
+
+.top-row > :last-child {
+  flex: 2;
+}

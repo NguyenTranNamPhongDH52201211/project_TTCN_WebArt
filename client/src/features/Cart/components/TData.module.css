@@ -1,0 +1,45 @@
+.data-container td {
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+}
+
+.product-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.img-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+}
+
+.product-info p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 500;
+  color: #343a40;
+}
+
+.delete-btn {
+  background: #dc3545;
+  border: none;
+  color: #fff;
+  padding: 8px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.delete-btn:hover {
+  background: #bb2d3b;
+}
+.price {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+}

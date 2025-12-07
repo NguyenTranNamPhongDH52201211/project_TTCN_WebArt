@@ -1,0 +1,116 @@
+.footer {
+  background: #ffffff;        /* NỀN TRẮNG */
+  color: #222;                /* CHỮ ĐEN */
+  padding: 40px 20px 10px;
+  border-top: 3px solid #ffcc00;
+  margin-top: 40px;
+}
+
+/* Container */
+.footer-container {
+  max-width: 1200px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.footer-col {
+  flex: 1;
+  min-width: 250px;
+}
+
+/* Logo */
+.footer-logo {
+  width: 110px;
+  height: auto;
+  margin-bottom: 12px;
+  object-fit: contain;
+  opacity: 1;   /* full đậm */
+}
+
+/* Text */
+.footer-text {
+  font-size: 14px;
+  margin: 4px 0;
+  color: #444;      /* CHỮ ĐEN NHẸ */
+}
+
+.footer-legal {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 10px;
+  color: #555;      /* MÀU ĐEN XÁM */
+}
+
+/* Title */
+.footer-col h3 {
+  color: #ff9900;            /* Accent vàng đậm – nổi bật trên nền trắng */
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* List */
+.footer-col ul {
+  padding: 0;
+  list-style: none;
+}
+
+.footer-col li {
+  padding: 4px 0;
+  cursor: pointer;
+  color: #222;                /* chữ đen */
+  transition: 0.3s;
+}
+
+.footer-col li:hover {
+  color: #ff9900;            /* hover vàng */
+  transform: translateX(3px);
+}
+
+/* Fanpage Box */
+.fanpage-box {
+  background: #f5f5f5;       /* xám rất nhẹ */
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #ddd;
+}
+
+.fanpage-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.fanpage-name {
+  font-weight: bold;
+  font-size: 15px;
+  color: #222;
+}
+
+.fanpage-followers {
+  font-size: 13px;
+  color: #666;
+}
+
+/* Copyright */
+.footer-copy {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e5e5;
+  font-size: 14px;
+  color: #555;
+}
+
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+  }
+}

@@ -10,9 +10,26 @@ class CategoryController{
             res.status(500).json({message: error.message});
         }
     }
+    static async getAllParentType(req,res){
+        try {
+            const Cates= await CategoryService.getAllParentType() ;
+            res.json(Cates);
+        } catch (error) {
+            console.error('Controller error:', error); 
+            res.status(500).json({message: error.message});
+        }
+    }
      static async getById(req,res){
         try {
             const Cates= await CategoryService.getCateDetails(req.params.id);
+            res.json(Cates);
+        } catch (error) {
+            res.status(404).json({message: error.message});
+        }
+    }
+     static async getSubTypeByParentId(req,res){
+        try {
+            const Cates= await CategoryService.getSubTypeByParentId(req.params.id);
             res.json(Cates);
         } catch (error) {
             res.status(404).json({message: error.message});

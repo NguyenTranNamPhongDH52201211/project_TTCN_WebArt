@@ -1,0 +1,13 @@
+.home-container {
+  display: flex;
+  flex-direction: column; /* xếp dọc */
+  align-items: center;    /* căn giữa theo chiều ngang */
+  padding-top: 80px;
+  max-height: 100vh;
+  box-sizing: border-box;
+  background: #f9fafc;
+}
+main {
+flex: 0 0 80%; /* cố định 80% chiều cao màn hình */
+  overflow-y: auto; /* nếu nội dung nhiều, có scroll */
+  padding: 20px;}

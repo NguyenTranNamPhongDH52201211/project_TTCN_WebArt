@@ -1,0 +1,20 @@
+.product-info {
+    flex: 1;
+}
+
+.product-info h1 {
+    font-size: 20px;
+    margin: 0 0 8px;
+}
+
+.product-info p {
+    margin: 4px 0;
+    color: #666;
+}
+
+.price {
+    font-size: 22px;
+    color: #00a0e9;
+    font-weight: bold;
+    margin: 10px 0;
+}

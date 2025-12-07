@@ -61,3 +61,21 @@ h1 {
   gap: 1rem;
   margin:1rem 1rem 1rem 0;
 }
+
+.preview-images {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* căn giữa theo chiều ngang */
+  gap: 15px; /* khoảng cách giữa các ảnh */
+  margin-top: 1rem;
+}
+
+.preview-thumb {
+  width: 400px;       /* chiều rộng lớn hơn */
+  height: 400px;      /* chiều cao lớn hơn */
+  object-fit: cover;  /* giữ tỉ lệ và cắt ảnh nếu cần */
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  max-height: 500px;
+  max-width: 500px;
+}
