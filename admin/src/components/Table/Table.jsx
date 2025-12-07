@@ -47,7 +47,7 @@ const Table = ({
                 <FiMoreHorizontal className="more-icon" onClick={() => toggleMenu(rowIndex)} />
                 {openMenuIndex === rowIndex && (
                   <div className="actions-dropdown">
-                    <p className="dropdown-item" onClick={() => { if (onView) onView(row); toggleMenu(rowIndex); }}>View</p>
+                   <p className="dropdown-item" onClic k={() => { if (onView) onView(row); toggleMenu(rowIndex); }}>View</p>
                     {/* FIX: Dùng idField để lấy đúng ID */}
                     <Link 
                       to={`/updateproductpage/${row[idField]}`} 

@@ -1,4 +1,5 @@
-const ProductService = require('../services/ProductService');
+const ProductService = require('../services/ProductServices');
+const ImageService = require('../services/ImagesServices');
 
 class ProductController {
     static async getAll(req, res) {
@@ -21,47 +22,68 @@ class ProductController {
     }
 
     static async create(req, res) {
-        try {
-            console.log("REQ BODY PRODUCT:", req.body);
+    try {
+      console.log("REQ BODY:", req.body);
+      console.log("REQ FILES:", req.files);
 
-            // Validate dữ liệu cơ bản
-            if (!req.body.product_name || !req.body.product_id) {
-                return res.status(400).json({
-                    message: "Missing required fields: product_name, product_id"
-                });
-            }
+      if (!req.body.product_name || !req.body.product_id) {
+        return res.status(400).json({
+          message: "Missing required fields: product_name or product_id"
+        });
+      }
+      
+      const productData = {
+        product_id: req.body.product_id,
+        product_name: req.body.product_name,
+        product_category_id: req.body.product_category_id,
+        product_brand: req.body.product_brand,
+        product_code: req.body.product_code,
+        product_base_price: req.body.product_base_price,
+        product_description: req.body.product_description
+      };
 
-            const productId = await ProductService.createProduct(req.body);
+      const createdProductId = await ProductService.createProduct(productData);
+      const productId = createdProductId || req.body.product_id;
 
-            // Trả về product_id từ body (vì bạn đã tạo UUID từ frontend)
-            res.status(201).json({
-                productId: req.body.product_id, // Hoặc productId nếu insertId hợp lệ
-                success: true
-            });
-        } catch (err) {
-            console.error("CREATE PRODUCT ERROR:", err);
-            res.status(400).json({
-                message: err.message,
-                error: err.sqlMessage || err // Thêm chi tiết lỗi SQL
-            });
-        }
+      
+      let uploadedImages = [];
+      if (req.files && req.files.length > 0) {
+        uploadedImages = await ImageService.uploadMultiple(productId, req.files);
+      }
+
+      
+      return res.status(201).json({
+        success: true,
+        productId,
+        images: uploadedImages
+      });
+
+    } catch (err) {
+      console.error("CREATE PRODUCT ERROR:", err);
+      return res.status(500).json({
+        message: "Error creating product",
+        error: err.message
+      });
     }
+  }
 
     static async update(req, res) {
         try {
-            const product = await ProductService.updateProduct(req.params.id, req.body);
-            res.json(product);
+            const result = await ProductService.updateProduct(req.params.id, req.body,req.files);
+            res.json(result);
+
         } catch (err) {
-            res.status(404).json({ message: err.message });
+            res.status(500).json({ message: err.message });
         }
     }
+
 
     static async delete(req, res) {
         try {
             await ProductService.deleteProduct(req.params.id);
             res.json({ message: "Product deleted" });
         } catch (err) {
-            res.status(404).json({ message: err.message });
+            res.status(500).json({ message: err.message });
         }
     }
 
