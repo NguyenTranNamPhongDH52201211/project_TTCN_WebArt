@@ -1,8 +1,9 @@
 const cloudinary = require("../config/CloudinaryConfig");
-const  ProductImagesModel = require ("../models/ProductImagesModel");
+const ProductImagesModel = require("../models/ProductImagesModel");
 
 class ImagesService {
     static async uploadMultiple(productId, files) {
+        
         const uploaded = [];
 
         for (const file of files) {
@@ -12,13 +13,13 @@ class ImagesService {
                     async (err, result) => {
                         if (err) return reject(err);
 
-                    await ProductImagesModel.create({
-                        image_product_id: productId,
-                        image_url: result.secure_url
-                    });
+                        await ProductImagesModel.create({
+                            image_product_id: productId,
+                            image_url: result.secure_url
+                        });
 
 
-                    resolve(result.secure_url);
+                        resolve(result.secure_url);
                     }
                 ).end(file.buffer);
             });
@@ -29,10 +30,10 @@ class ImagesService {
         return uploaded;
     }
 
-    static async deleteByProductId(productId){
+    static async deleteByProductId(productId) {
         return await ProductImagesModel.deleteByProductId(productId);
     }
 
 }
 
-module.exports= ImagesService;
+module.exports = ImagesService;

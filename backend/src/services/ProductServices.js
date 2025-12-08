@@ -1,5 +1,4 @@
-
-const ProductModel = require("../models/productModel");
+const ProductModel = require("../models/ProductModel");
 const ImagesService = require("./ImagesServices");
 const ProductImagesModel = require("../models/ProductImagesModel");
 
@@ -15,20 +14,31 @@ class ProductService {
     return product[0];
   }
 
+  static async createProduct(data) {
+    const existedTotal = await ProductModel.getByCode(data.product_code);
 
-   static async createProduct(data) {
-   
-    const productId = await ProductModel.create(data); 
-    return data.product_id || productId; 
+    if (existedTotal > 0) {
+      throw new Error("Product code already exists");
+    }
+
+    const productId = await ProductModel.create(data);
+    return productId;
+  }
+
+
+  static async createProduct(data) {
+    const productId = await ProductModel.create(data);
+    return data.product_id || productId;
   }
 
 
   static async getfilterByParentOfChild(id) {
     return await ProductModel.filterByParentOfChild(id);
   }
+
   static async createProduct(data) {
     const productId = await ProductModel.create(data);
-    return data.product_id || productId;
+    return productId;
   }
 
   static async updateProduct(id, data, files) {

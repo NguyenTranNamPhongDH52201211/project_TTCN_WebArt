@@ -11,11 +11,63 @@ const UpdateProductPage = () => {
   const [product, setProduct] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [errors, setErrors] = useState({});
 
   // image upload state
   const [newImages, setNewImages] = useState([]); // File objects to upload
   const [previewUrls, setPreviewUrls] = useState([]); // local previews
   const fileInputRef = useRef(null);
+
+
+  const validateProduct = () => {
+    const newErrors = {};
+
+    if (newImages.length === 0) {
+      newErrors.newImages = "Phải có ít nhất 1 ảnh";
+    }
+
+    if (!product.product_name || product.product_name.trim() === "") {
+      newErrors.product_name = "Tên sản phẩm không được để trống";
+    }
+
+    if (!product.product_category_id) {
+      newErrors.product_category_id = "Loại sản phẩm không được để trống";
+    }
+
+    if (!product.product_brand) {
+      newErrors.product_brand = "Thương hiệu sản phẩm không được để trống";
+    }
+
+    if (!product.product_code || product.product_code.trim() === "") {
+      newErrors.product_code = "Mã hiển thị sản phẩm không được để trống";
+    }
+
+    if (!product.product_base_price || isNaN(product.product_base_price)) {
+      
+      newErrors.product_base_price = "Giá sản phẩm không được để trống";
+
+    } else if (product.product_base_price < 0) {
+
+      newErrors.product_base_price = "Giá sản phẩm phải lớn hơn hoặc bằng 0";
+    }
+
+
+
+    if (
+      product.product_stock == null ||
+      product.product_stock === "" ||
+      isNaN(product.product_stock)
+    ) {
+      newErrors.product_stock = "Số lượng không được để trống";
+    } else if (product.product_stock < 0) {
+      newErrors.product_stock = "Số lượng không được là số âm";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0; // valid nếu không có lỗi
+  };
+
 
   // Load product + category + inventory
   useEffect(() => {
@@ -71,6 +123,8 @@ const UpdateProductPage = () => {
     return () => { mounted = false; };
   }, [id]);
 
+
+
   // Create fields from product state
   const fields = useMemo(() => {
     if (!product) return [];
@@ -96,7 +150,7 @@ const UpdateProductPage = () => {
         label: "Brand",
         type: "select",
         placeholder: "Select a brand",
-        options: ["Marvy", "Lobeo", "Phoenix", "Corma", "Copic", "Gelly Roll","Grap Master","Touchliit"].map(b => ({ value: b, label: b })),
+        options: ["Marvy", "Lobeo", "Phoenix", "Corma", "Copic", "Gelly Roll", "Grap Master", "Touchliit"].map(b => ({ value: b, label: b })),
         value: product.product_brand || ""
       },
       {
@@ -154,7 +208,12 @@ const UpdateProductPage = () => {
 
   // Handle save button (keeps your inventory logic; supports uploading images if selected)
   const handleSave = async () => {
+
+    if (!validateProduct()) {
+      return;
+    }
     const { product_stock, ...productPayload } = product || {};
+
 
     try {
       console.log("Sending product:", product);
@@ -223,7 +282,7 @@ const UpdateProductPage = () => {
       }
 
       // Cleanup previews and reset newImages
-      try { previewUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(e){} }); } catch(e){}
+      try { previewUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) { } }); } catch (e) { }
       setNewImages([]);
       setPreviewUrls([]);
 
@@ -269,6 +328,9 @@ const UpdateProductPage = () => {
               style={{ position: 'absolute', left: '-9999px' }}
             />
           </div>
+          {errors.newImages && (
+            <p style={{ color: "red", marginTop: "5px" }}>{errors.newImages}</p>
+          )}
 
           {/* preview ảnh mới (nếu user đã chọn) */}
           <div className="preview-images">
@@ -276,6 +338,7 @@ const UpdateProductPage = () => {
               <img key={idx} src={url} alt={`preview-${idx}`} className="preview-thumb" />
             ))}
           </div>
+
         </div>
 
         {/* Form Section */}
@@ -283,6 +346,7 @@ const UpdateProductPage = () => {
           title="Products Description"
           fields={fields}
           onChange={handleFormChange}
+          errors={errors}
         />
 
         {/* Buttons */}

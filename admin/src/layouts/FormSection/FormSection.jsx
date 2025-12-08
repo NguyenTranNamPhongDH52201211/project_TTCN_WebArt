@@ -1,7 +1,7 @@
 import './FormSection.css';
 
-const FormSection = ({ title, fields = [], onChange, onSubmit }) => {
-  
+const FormSection = ({ title, fields = [], onChange, onSubmit, errors }) => {
+
   const handleChange = (key, value) => {
     if (onChange) {
       // Tạo object mới với giá trị updated
@@ -9,7 +9,7 @@ const FormSection = ({ title, fields = [], onChange, onSubmit }) => {
         acc[field.key] = field.value ?? field.defaultValue ?? (field.type === "quantity" ? 1 : "");
         return acc;
       }, {});
-      
+
       onChange({ ...currentData, [key]: value });
     }
   };
@@ -22,11 +22,12 @@ const FormSection = ({ title, fields = [], onChange, onSubmit }) => {
   const renderField = (field) => {
     const { key, type, placeholder, options, rows, value, defaultValue } = field;
     const fieldValue = value ?? defaultValue ?? (type === "quantity" ? 1 : "");
+    const error = errors?.[key];
 
     switch (type) {
       case "select":
         return (
-          <select value={fieldValue} onChange={(e) => handleChange(key, e.target.value)}>
+          <select value={fieldValue} onChange={(e) => handleChange(key, e.target.value)} className={error ? "error-input" : ""}>
             <option value="">{placeholder || "Select..."}</option>
             {options?.map((opt, idx) => {
               const optValue = typeof opt === 'object' ? opt.value : opt;
@@ -52,7 +53,7 @@ const FormSection = ({ title, fields = [], onChange, onSubmit }) => {
 
       case "quantity":
         return (
-          <div className="quantity-input">
+          <div className="quantity-input" >
             <button type="button" onClick={() => handleQuantityChange(key, fieldValue, -1)}>
               -
             </button>
@@ -61,7 +62,12 @@ const FormSection = ({ title, fields = [], onChange, onSubmit }) => {
               +
             </button>
           </div>
+          
         );
+        
+      case "custom":
+        return field.render ? field.render() : null;
+
 
       default:
         return (
@@ -70,6 +76,7 @@ const FormSection = ({ title, fields = [], onChange, onSubmit }) => {
             placeholder={placeholder}
             value={fieldValue}
             onChange={(e) => handleChange(key, e.target.value)}
+            className={error ? "error-input" : ""}
           />
         );
     }
@@ -94,6 +101,7 @@ const FormSection = ({ title, fields = [], onChange, onSubmit }) => {
           <div key={field.key} className="form-group">
             <label>{field.label}</label>
             {renderField(field)}
+            <p className="error-text">{errors[field.key]}</p>
           </div>
         ))}
       </div>

@@ -24,6 +24,18 @@ class ProductController {
     }
   }
 
+  static async checkProductCode(req, res) {
+    try {
+      const total = await ProductService.getByCode(req.params.code);
+
+      return res.json({ exists: total > 0 });
+
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
+
   static async getById(req, res) {
     try {
       const product = await ProductService.getProductDetails(req.params.id);
@@ -40,7 +52,7 @@ class ProductController {
       console.log("REQ BODY:", req.body);
       console.log("REQ FILES:", req.files);
 
-      if (!req.body.product_name || !req.body.product_id) {
+      if (!req.body.product_name) {
         return res.status(400).json({
           message: "Missing required fields: product_name or product_id",
         });
@@ -56,8 +68,8 @@ class ProductController {
         product_description: req.body.product_description,
       };
 
-      const createdProductId = await ProductService.createProduct(productData);
-      const productId = createdProductId || req.body.product_id;
+      const productId = await ProductService.createProduct(productData);
+
 
       let uploadedImages = [];
       if (req.files && req.files.length > 0) {

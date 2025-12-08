@@ -3,7 +3,7 @@ const db = require("../config/db"); // hoặc require nếu dùng CommonJS
 class ProductModel {
   static async getAll() {
     // Lấy tất cả sản phẩm
-    const [rows] = await db.query(`SELECT 
+    const [rows] = await db.execute(`SELECT 
     p.product_id,
     p.product_name,
     p.product_base_price,
@@ -17,14 +17,14 @@ class ProductModel {
 
 
     for (const product of rows) {
-      const [images] = await db.query(
+      const [images] = await db.execute(
         "SELECT image_url FROM Product_Image WHERE image_product_id = ?",
         [product.product_id]
       );
       product.images = images.map(img => img.image_url); // gán mảng ảnh vào mỗi sản phẩm
       // ✅ THÊM: lấy ảnh cho từng sản phẩm
       for (const product of rows) {
-        const [images] = await db.query(
+        const [images] = await db.execute(
           "SELECT image_url FROM Product_Image WHERE image_product_id = ?",
           [product.product_id]
         );
@@ -36,7 +36,7 @@ class ProductModel {
   }
 
   static async filterByParentOfChild(childCateId) {
-    const [childRow] = await db.query(
+    const [childRow] = await db.execute(
       "SELECT cate_name FROM Category WHERE cate_id = ?",
       [childCateId]
     );
@@ -52,7 +52,7 @@ class ProductModel {
       .join(" OR ");
     const params = words.map((w) => `%${w}%`);
 
-    const [rows] = await db.query(
+    const [rows] = await db.execute(
       `SELECT p.*, i.invent_quantity_available AS product_stock
      FROM Product p
      LEFT JOIN Inventory i ON i.invent_product_id = p.product_id
@@ -62,7 +62,7 @@ class ProductModel {
 
     // Lấy ảnh
     for (const product of rows) {
-      const [images] = await db.query(
+      const [images] = await db.execute(
         "SELECT image_url FROM Product_Image WHERE image_product_id = ?",
         [product.product_id]
       );
@@ -73,10 +73,21 @@ class ProductModel {
 
   }
 
+  static async getByCode(code) {
+    const [rows] = await db.execute(
+      "SELECT COUNT(*) AS total FROM product WHERE product_code = ?",
+      [code]
+    );
+    return rows[0].total; // trả về số lượng trùng
+  }
+
+
+
+
   static async getById(id) {
 
     // Lấy sản phẩm theo id
-    const rows = await db.query("SELECT * FROM product WHERE product_id = ?", [
+    const rows = await db.execute("SELECT * FROM product WHERE product_id = ?", [
       id,
     ]);
 
@@ -85,10 +96,27 @@ class ProductModel {
 
   static async create(data) {
     try {
+      const productId = data.product_id;
+      const sql = `
+      INSERT INTO product 
+      (product_id, product_name, product_category_id, product_brand, product_code, product_base_price, product_description) 
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
 
-      const [result] = await db.query("INSERT INTO product SET ?", [data]);
 
-      return data.product_id || result.insertId;
+      const values = [
+        productId,
+        data.product_name,
+        data.product_category_id,
+        data.product_brand,
+        data.product_code,
+        data.product_base_price,
+        data.product_description
+      ];
+
+      await db.execute(sql, values);
+      return productId;
+
     } catch (error) {
       console.error("Model Error:", error);
       throw error;
@@ -98,7 +126,7 @@ class ProductModel {
   static async delete(id) {
 
     // Xóa sản phẩm
-    const [result] = await db.query(
+    const [result] = await db.execute(
       "DELETE FROM product WHERE product_id = ?",
       [id]
     );
@@ -107,11 +135,28 @@ class ProductModel {
 
   static async update(id, data) {
     // Cập nhật sản phẩm
-    const [result] = await db.query(
-      "UPDATE product SET ? WHERE product_id = ?",
-      [data, id]
-    );
-    return result.affectedRows; // số row bị cập nhật
+    const sql = `
+    UPDATE product SET
+      product_name = ?,
+      product_category_id = ?,
+      product_brand = ?,
+      product_code = ?,
+      product_base_price = ?,
+      product_description = ?
+    WHERE product_id = ?
+  `;
+
+    const values = [
+      data.product_name,
+      data.product_category_id,
+      data.product_brand,
+      data.product_code,
+      data.product_base_price,
+      data.product_description,
+      id
+    ];
+
+    return db.execute(sql, values);// số row bị cập nhật
   }
 }
 
