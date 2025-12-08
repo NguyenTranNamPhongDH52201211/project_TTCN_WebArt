@@ -158,3 +158,12 @@ h2 {
   font-size: 14px;
   margin-bottom: 10px;
 }
+.text {
+  display: flex;
+  align-items: center;      /* căn giữa theo chiều dọc */
+  padding: 5px 5px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  background: #fafafa;
+  margin-bottom: 5px;
+}
