@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Categories.module.css";
-import { getCategories } from "../../../data/ProductConTextType";
+import { getCategories } from "../../../api/categoriesService";
 import { useNavigate } from "react-router-dom";
 
 export default function Categories() {
@@ -10,7 +10,7 @@ export default function Categories() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await getCategories(); // gọi API backend
+        const data = await getCategories();
         setCategories(data);
       } catch (error) {
         console.error("Lỗi khi load categories:", error);
@@ -18,10 +18,9 @@ export default function Categories() {
     }
     load();
   }, []);
-
   const handleSelect = (subCateId) => {
     navigate("/categoriesitemlist", {
-      state: { subCategoryId:subCateId },
+      state: { subCategoryId: subCateId },
     });
   };
 
@@ -35,7 +34,7 @@ export default function Categories() {
 
             {/* hiển thị submenu */}
             <ul className={styles["subcategory-popup"]}>
-              {cat.children.map((obj,i) => (
+              {cat.children.map((obj, i) => (
                 <li
                   key={i}
                   className={styles["subcategory-item"]}

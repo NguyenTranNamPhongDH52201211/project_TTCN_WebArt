@@ -1,0 +1,88 @@
+
+
+.signin-container {
+  padding: 30px 40px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  width: 100%;
+  box-sizing: border-box;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: solid 1px;
+}
+
+.signin-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: rgb(67, 58, 58);
+}
+
+.signin-container form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color:rgb(10, 8, 8);
+}
+
+.signin-container form input {
+  width: 90%;
+  padding: 10px;
+  
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.signin-container form button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.signin-container form button:hover {
+  background-color: #0056b3;
+}
+
+
+.password-strength {
+  font-weight: bold;
+  width: 90%;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+}
+
+/* Mật khẩu yếu: đỏ */
+.weak {
+  background-color: #ff4d4d;
+}
+
+/* Mật khẩu trung bình: cam */
+.medium {
+  background-color: #ffa500;
+}
+
+/* Mật khẩu mạnh: xanh lá */
+.strong {
+  background-color: #28a745;
+}
+.rules-container {
+  margin-top: 10px;
+  font-size: 14px;
+  width: 90%;
+}
+
+.ok {
+  color: #28a745;  /* xanh */
+  font-weight: bold;
+}
+
+.no {
+  color: #777; /* xám */
+}

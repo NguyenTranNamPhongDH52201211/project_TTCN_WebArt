@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./Forgot.module.css";
 import React, { useState } from "react";
-import { users } from "../../../data/userAccount";
+import { users } from "../../../api/userAccount";
 
 export default function Forgot() {
   const [email, setEmail] = useState("");

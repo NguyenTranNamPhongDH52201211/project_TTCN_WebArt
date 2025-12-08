@@ -5,7 +5,7 @@ import Categories from "../../Categories/pages/Categories";
 import ProductList from "../../Product/pages/ProductList";
 import FeaturedSlider from "./FeaturedSlider";
 
-import { getProducts } from "../../../data/product";
+import { getProducts } from "../../../api/productService";
 import { SearchContext } from "../../../context/SearchContext";
 
 const Home = () => {

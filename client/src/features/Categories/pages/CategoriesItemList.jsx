@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import styles from "./CategoriesItemList.module.css";
 import ProductList from "../../Product/pages/ProductList";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
-import { formatProducts } from "../../../data/customeProductfield";
+import { filterProducts } from "../../../api/productService";
 const CategoriesItemList = () => {
   const [products, setProducts] = useState([]);
   const location = useLocation();
@@ -11,20 +10,15 @@ const CategoriesItemList = () => {
 
   useEffect(() => {
     if (!subCategoryId) return;
-
-    async function fetchProducts() {
+    async function load() {
       try {
-        const res = await axios.get(
-          `http://localhost:3000/api/products/filter/${subCategoryId}`
-        );
-        const formatted = formatProducts(res.data); // dùng helper để format dữ liệu
-        setProducts(formatted);
+        const data = await filterProducts(subCategoryId);
+        setProducts(data);
       } catch (error) {
         console.error("Lỗi khi load sản phẩm:", error);
       }
     }
-
-    fetchProducts();
+    load();
   }, [subCategoryId]);
 
   return (

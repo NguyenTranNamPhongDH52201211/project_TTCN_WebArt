@@ -2,8 +2,7 @@ import styles from "./Sidecart.module.css";
 import Tabledata from "../components/Tabledata";
 import React,{useState,useEffect} from "react";
 import { useCart } from "../../../context/CartContext";
-import { getProducts } from "../../../data/product";
-import { Link } from "react-router-dom";
+import { getProducts } from "../../../api/productService";
 import { useNavigate } from "react-router-dom";
 export default function Sidecart() {
    const [products, setProducts] = useState([]);
