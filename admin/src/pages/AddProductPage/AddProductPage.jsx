@@ -2,6 +2,7 @@ import './AddProductPage.css';
 import { FiUpload } from 'react-icons/fi';
 import Button from '../../components/Button/Button';
 import FormSection from '../../layouts/FormSection/FormSection';
+import {useToast} from '../../components/ToastManager/ToastManager'
 import { useEffect, useState, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,8 +11,9 @@ const AddProductPage = () => {
     const newProductId = useRef(uuidv4()).current;
     const [images, setImages] = useState([]);
     const [categories, setCategories] = useState([]);
-    const [codeStatus, setCodeStatus] = useState(null);
+    const [codeStatus, setCodeStatus] = useState("");
     const [errors, setErrors] = useState({});
+    const {showToast} = useToast();
     const [productData, setProductData] = useState({
         product_name: "",
         product_category_id: "",
@@ -43,15 +45,12 @@ const AddProductPage = () => {
         const timeout = setTimeout(async () => {
             try {
                 const res = await fetch(`http://localhost:3000/api/products/check/${code}`);
-            
+                const data = await res.json();
 
-
-                if (res.status === 404) {
-                    setCodeStatus("Hợp lệ"); // chưa tồn tại => OK
-                } else if (res.ok) {
-                    setCodeStatus("Đã tồn tại mã này"); // đã tồn tại
+                if (!data.exists) {
+                    setCodeStatus("Hợp lệ");
                 } else {
-                    setCodeStatus("Lỗi");
+                    setCodeStatus("Đã tồn tại mã này");
                 }
 
             } catch (err) {
@@ -74,8 +73,6 @@ const AddProductPage = () => {
         if (!productData.product_name.trim()) {
             newErrors.product_name = "Tên sản phẩm không được để trống";
         }
-    
-
 
         if (!productData.product_category_id) {
             newErrors.product_category_id = "Loại sản phẩm không được để trống";
@@ -87,7 +84,7 @@ const AddProductPage = () => {
 
         if (!productData.product_code.trim()) {
             newErrors.product_code = "Mã sản phẩm không được để trống";
-            
+
         } else if (!/^[A-Za-z0-9-]+$/.test(productData.product_code)) {
 
             newErrors.product_code = "Mã sản phẩm chỉ cho phép chữ, số, dấu -";
@@ -154,7 +151,15 @@ const AddProductPage = () => {
             });
 
             if (!productResponse.ok) {
+
                 const errorData = await productResponse.json();
+                if (errorData.error === "duplicate_code") {
+                    setErrors(prev => ({
+                        ...prev,
+                        product_code: "Mã sản phẩm đã tồn tại. Hãy nhập mã khác!"
+                    }));
+                    return; // Dừng không chạy tiếp
+                }
                 throw new Error(errorData.message || "Failed to create product");
 
             }
@@ -170,11 +175,11 @@ const AddProductPage = () => {
                     invent_quantity_available: parseInt(productData.stock_quantity, 10)
                 })
             });
-            alert("Product added successfully!");
+           showToast("Thêm sản phẩm thành công!", "success");
 
         } catch (error) {
             console.log("Error", error);
-            alert("Failed to add product: " + error.message);
+            showToast("Lỗi thêm sản phẩm!", "error"); 
         }
     }
 
@@ -217,9 +222,7 @@ const AddProductPage = () => {
                         { key: 'product_name', label: 'Product Name', type: 'input', placeholder: 'Enter product name', value: productData.product_name },
                         { key: 'product_category_id', label: 'Category', type: 'select', placeholder: 'Select a category', options: categories.map(c => ({ label: c.cate_name, value: c.cate_id })), value: productData.product_category_id },
                         { key: 'product_brand', label: 'Brand', type: 'select', placeholder: 'Select brand', options: ["Marvy", "Lobeo", "Phoenix", "Corma", "Copic", "Gelly Roll", "Grap Master", "Touchliit"], value: productData.product_brand },
-                        {
-                            key: 'product_code', label: 'Product Code', type: 'input', value: productData.product_code
-                        },
+                        { key: 'product_code', label: 'Product Code', type: 'input', value: productData.product_code },
                         { key: 'stock_quantity', label: 'Stock Quantity', type: 'quantity', defaultValue: 1, value: productData.stock_quantity },
                         { key: 'product_base_price', label: 'Price', type: 'input', placeholder: '0', value: productData.product_base_price },
                         { key: 'product_description', label: 'Description', type: 'textarea', placeholder: 'Receipt Info (optional)', rows: 5, value: productData.product_description },

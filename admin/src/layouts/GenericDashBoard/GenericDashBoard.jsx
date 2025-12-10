@@ -1,7 +1,7 @@
 // src/components/GenericDashboard.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiPlus, FiSearch, FiSliders } from 'react-icons/fi';
+import { FiPlus, FiSliders } from 'react-icons/fi';
 import Table from '../../components/Table/Table';
 import Pagination from '../../components/Pagination/Pagination';
 import Button from '../../components/Button/Button';
@@ -34,13 +34,7 @@ const GenericDashboard = ({
   onFilter,
 }) => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    if (onSearch) onSearch(e.target.value);
-  };
-
+ 
   const handleAddClick = () => {
     navigate(addButtonPath);
   };

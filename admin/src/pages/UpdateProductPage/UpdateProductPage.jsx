@@ -1,8 +1,9 @@
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { useToast } from '../../components/ToastManager/ToastManager'
 import { FiUpload } from 'react-icons/fi';
 import Button from '../../components/Button/Button';
 import FormSection from '../../layouts/FormSection/FormSection';
-import { useParams } from 'react-router-dom';
-import { useEffect, useState, useMemo, useRef } from 'react';
 import "./UpdateProductPage.css";
 
 const UpdateProductPage = () => {
@@ -11,20 +12,114 @@ const UpdateProductPage = () => {
   const [product, setProduct] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [codeStatus, setCodeStatus] = useState("");
   const [errors, setErrors] = useState({});
+  const { showToast } = useToast();
 
   // image upload state
   const [newImages, setNewImages] = useState([]); // File objects to upload
   const [previewUrls, setPreviewUrls] = useState([]); // local previews
   const fileInputRef = useRef(null);
+  // Load product + category + inventory
+  useEffect(() => {
+    let mounted = true;
+
+    Promise.all([
+      fetch(`http://localhost:3000/api/products/${id}`).then(res => res.json()),
+      fetch(`http://localhost:3000/api/category`).then(res => res.json()),
+      fetch(`http://localhost:3000/api/inventory/${id}`).then(res => res.json())
+    ])
+      .then(([productData, categoriesData, inventoryData]) => {
+        console.log("ProductData:", productData);
+        console.log("CategoriesData:", categoriesData);
+        console.log("InventoryData:", inventoryData);
+
+        // Normalize productData if backend returns array rows
+        let productObj = productData;
+        if (Array.isArray(productData)) {
+          productObj = productData.length > 0
+            ? (Array.isArray(productData[0]) ? productData[0][0] : productData[0])
+            : {};
+        }
+
+
+        // Normalize inventory
+        const inventory = Array.isArray(inventoryData)
+          ? (Array.isArray(inventoryData[0]) ? inventoryData[0][0] : inventoryData[0])
+          : inventoryData;
+
+        // Ensure images is an array (not used in UI here but kept consistent)
+        productObj.images = productObj.images
+          ? (Array.isArray(productObj.images) ? productObj.images : [productObj.images])
+          : [];
+
+        if (mounted) {
+          setProduct({
+            ...productObj,
+            product_stock: inventory?.invent_quantity_available ?? 0,
+            original_code: productObj.product_code
+          });
+          setCategories(categoriesData || []);
+          setIsLoading(false);
+
+          console.log("Product state sau khi set:", {
+            ...productObj,
+            product_stock: inventory?.invent_quantity_available ?? 0
+          });
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        if (mounted) setIsLoading(false);
+      });
+
+    return () => { mounted = false; };
+  }, [id]);
+
+
+  useEffect(() => {
+    if (!product) return;
+
+    const code = product.product_code?.trim();
+    if (!code) {
+      setCodeStatus("");
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/api/products/check/${code}`);
+        const data = await res.json();
+
+        // Nếu mã tồn tại nhưng không phải chính sản phẩm đang update
+        if (data.exists && code !== product.original_code) {
+          setCodeStatus("Đã tồn tại mã này");
+          setErrors(prev => ({ ...prev, product_code: "Mã sản phẩm đã tồn tại" }));
+        } else {
+          setCodeStatus("Hợp lệ");
+          setErrors(prev => {
+            const newErr = { ...prev };
+            delete newErr.product_code;
+            return newErr;
+          });
+        }
+
+      } catch (err) {
+        console.log(err);
+        setCodeStatus("Lỗi kết nối API");
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+
+  }, [product?.product_code]);
+
+
 
 
   const validateProduct = () => {
     const newErrors = {};
 
-    if (newImages.length === 0) {
-      newErrors.newImages = "Phải có ít nhất 1 ảnh";
-    }
 
     if (!product.product_name || product.product_name.trim() === "") {
       newErrors.product_name = "Tên sản phẩm không được để trống";
@@ -34,16 +129,19 @@ const UpdateProductPage = () => {
       newErrors.product_category_id = "Loại sản phẩm không được để trống";
     }
 
+    if (!product.product_code || product.product_code.trim() === "") {
+      newErrors.product_code = "Mã sản phẩm không được để trống";
+    } else if (codeStatus === "Đã tồn tại mã này") {
+      newErrors.product_code = "Mã sản phẩm đã tồn tại";
+    }
+
+
     if (!product.product_brand) {
       newErrors.product_brand = "Thương hiệu sản phẩm không được để trống";
     }
 
-    if (!product.product_code || product.product_code.trim() === "") {
-      newErrors.product_code = "Mã hiển thị sản phẩm không được để trống";
-    }
-
     if (!product.product_base_price || isNaN(product.product_base_price)) {
-      
+
       newErrors.product_base_price = "Giá sản phẩm không được để trống";
 
     } else if (product.product_base_price < 0) {
@@ -69,59 +167,7 @@ const UpdateProductPage = () => {
   };
 
 
-  // Load product + category + inventory
-  useEffect(() => {
-    let mounted = true;
 
-    Promise.all([
-      fetch(`http://localhost:3000/api/products/${id}`).then(res => res.json()),
-      fetch(`http://localhost:3000/api/category`).then(res => res.json()),
-      fetch(`http://localhost:3000/api/inventory/${id}`).then(res => res.json())
-    ])
-      .then(([productData, categoriesData, inventoryData]) => {
-        console.log("ProductData:", productData);
-        console.log("CategoriesData:", categoriesData);
-        console.log("InventoryData:", inventoryData);
-
-        // Normalize productData if backend returns array rows
-        let productObj = productData;
-        if (Array.isArray(productData)) {
-          productObj = productData.length > 0
-            ? (Array.isArray(productData[0]) ? productData[0][0] : productData[0])
-            : {};
-        }
-
-        // Normalize inventory
-        const inventory = Array.isArray(inventoryData)
-          ? (Array.isArray(inventoryData[0]) ? inventoryData[0][0] : inventoryData[0])
-          : inventoryData;
-
-        // Ensure images is an array (not used in UI here but kept consistent)
-        productObj.images = productObj.images
-          ? (Array.isArray(productObj.images) ? productObj.images : [productObj.images])
-          : [];
-
-        if (mounted) {
-          setProduct({
-            ...productObj,
-            product_stock: inventory?.invent_quantity_available ?? 0
-          });
-          setCategories(categoriesData || []);
-          setIsLoading(false);
-
-          console.log("Product state sau khi set:", {
-            ...productObj,
-            product_stock: inventory?.invent_quantity_available ?? 0
-          });
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        if (mounted) setIsLoading(false);
-      });
-
-    return () => { mounted = false; };
-  }, [id]);
 
 
 
@@ -212,19 +258,23 @@ const UpdateProductPage = () => {
     if (!validateProduct()) {
       return;
     }
+
     const { product_stock, ...productPayload } = product || {};
 
 
     try {
-      console.log("Sending product:", product);
 
       // If there are new images -> send FormData (do not set Content-Type)
       if (newImages && newImages.length > 0) {
         const formData = new FormData();
+
         Object.keys(productPayload).forEach(key => {
+
           const val = productPayload[key];
+
           if (val !== undefined && val !== null) formData.append(key, val);
         });
+
         newImages.forEach(img => formData.append("images", img)); // backend expects upload.array("images")
 
         const response = await fetch(`http://localhost:3000/api/products/${id}`, {
@@ -234,10 +284,14 @@ const UpdateProductPage = () => {
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
+          if (err.error === "duplicate_code") {
+            setErrors(prev => ({ ...prev, product_code: err.message }));
+            return;
+          }
           throw new Error(err.message || "Failed to update product with images");
         }
       } else {
-        // No new images: send JSON as before
+
         const response = await fetch(`http://localhost:3000/api/products/${id}`, {
           method: 'PUT',
           headers: {
@@ -248,6 +302,14 @@ const UpdateProductPage = () => {
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
+          if (err.error === "duplicate_code") {
+            setErrors(prev => ({
+              ...prev,
+              product_code: err.message || "Product code already exists!"
+            }));
+            return;
+          }
+
           throw new Error(err.message || "Failed to update product");
         }
       }
@@ -259,6 +321,7 @@ const UpdateProductPage = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: product_stock })
         });
+
 
         if (!inventoryResponse.ok) {
           alert('Failed to update inventory');
@@ -286,10 +349,16 @@ const UpdateProductPage = () => {
       setNewImages([]);
       setPreviewUrls([]);
 
-      alert('Product updated successfully!');
+      showToast("Cập nhật phẩm thành công!", "success");
     } catch (error) {
-      console.error('Error updating product:', error);
-      alert('Error updating product: ' + (error.message || 'Unknown error'));
+      if (error?.message) {
+        // Nếu là lỗi mã trùng từ backend
+        if (error.message.includes("tồn tại")) {
+          setErrors(prev => ({ ...prev, product_code: error.message }));
+        }
+      }
+
+        showToast("Lỗi cập nhật sản phẩm!", "error"); 
     }
   };
 

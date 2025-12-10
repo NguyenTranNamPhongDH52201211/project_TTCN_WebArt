@@ -15,31 +15,23 @@ class ProductService {
   }
 
   static async createProduct(data) {
-    const existedTotal = await ProductModel.getByCode(data.product_code);
-
-    if (existedTotal > 0) {
-      throw new Error("Product code already exists");
-    }
-
     const productId = await ProductModel.create(data);
     return productId;
   }
 
+  static async getByCode(data){
+       const existedTotal = await ProductModel.getByCode(data.product_code);
 
-  static async createProduct(data) {
-    const productId = await ProductModel.create(data);
-    return data.product_id || productId;
+        return existedTotal;
   }
+
+
 
 
   static async getfilterByParentOfChild(id) {
     return await ProductModel.filterByParentOfChild(id);
   }
 
-  static async createProduct(data) {
-    const productId = await ProductModel.create(data);
-    return productId;
-  }
 
   static async updateProduct(id, data, files) {
     const { images, ...productData } = data;

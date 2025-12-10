@@ -12,6 +12,7 @@ class ProductController {
       res.status(500).json({ message: err.message });
     }
   }
+
   static async getfilterByParentOfChild(req, res) {
     try {
       const products = await ProductService.getfilterByParentOfChild(
@@ -19,21 +20,21 @@ class ProductController {
       );
       res.json(products);
     } catch (err) {
-      console.error("Lỗi khi load sản phẩm:", err);
       res.status(500).json({ error: err.message });
     }
   }
 
-  static async checkProductCode(req, res) {
-    try {
-      const total = await ProductService.getByCode(req.params.code);
+ static async checkProductCode(req, res) {
+  try {
+    const total = await ProductService.getByCode(req.params.code);
 
-      return res.json({ exists: total > 0 });
+    return res.json({ exists: total > 0 });
 
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
   }
+}
+
 
 
   static async getById(req, res) {
@@ -73,10 +74,7 @@ class ProductController {
 
       let uploadedImages = [];
       if (req.files && req.files.length > 0) {
-        uploadedImages = await ImageService.uploadMultiple(
-          productId,
-          req.files
-        );
+        uploadedImages = await ImageService.uploadMultiple(productId,req.files);
       }
 
       return res.status(201).json({
@@ -85,12 +83,13 @@ class ProductController {
         images: uploadedImages,
       });
     } catch (err) {
-      console.error("CREATE PRODUCT ERROR:", err);
-      return res.status(500).json({
-        message: "Error creating product",
-        error: err.message,
-      });
-
+       if (err.code === "ER_DUP_ENTRY") {
+        return res.status(400).json({
+            error: "duplicate_code",
+            message: "Mã sản phẩm đã tồn tại"
+        });
+    }
+    return res.status(500).json({ message: err.message });
     }
   }
 
@@ -104,15 +103,20 @@ class ProductController {
       );
       res.json(result);
     } catch (err) {
-      res.status(500).json({ message: err.message });
-
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(400).json({
+            error: "duplicate_code",
+            message: "Mã sản phẩm đã tồn tại"
+        });
+    }
+    return res.status(500).json({ message: err.message });
     }
   }
 
   static async delete(req, res) {
     try {
       await ProductService.deleteProduct(req.params.id);
-      res.json({ message: "Product deleted" });
+      res.json();
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
