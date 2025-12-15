@@ -15,7 +15,7 @@ class AuthenController {
         sameSite: "strict",
         maxAge: 24 * 60 * 60 * 1000, // 1 ngày
       });
-
+        console.log("here")
       res.json({ user: result.user });
     } catch (err) {
       console.error(err);
