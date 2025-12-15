@@ -1,8 +1,9 @@
+import { useEffect, useState, useMemo, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { useToast } from '../../components/ToastManager/ToastManager'
 import { FiUpload } from 'react-icons/fi';
 import Button from '../../components/Button/Button';
 import FormSection from '../../layouts/FormSection/FormSection';
-import { useParams } from 'react-router-dom';
-import { useEffect, useState, useMemo, useRef } from 'react';
 import "./UpdateProductPage.css";
 
 const UpdateProductPage = () => {
@@ -11,12 +12,14 @@ const UpdateProductPage = () => {
   const [product, setProduct] = useState(null);
   const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [codeStatus, setCodeStatus] = useState("");
+  const [errors, setErrors] = useState({});
+  const { showToast } = useToast();
 
   // image upload state
   const [newImages, setNewImages] = useState([]); // File objects to upload
   const [previewUrls, setPreviewUrls] = useState([]); // local previews
   const fileInputRef = useRef(null);
-
   // Load product + category + inventory
   useEffect(() => {
     let mounted = true;
@@ -39,6 +42,7 @@ const UpdateProductPage = () => {
             : {};
         }
 
+
         // Normalize inventory
         const inventory = Array.isArray(inventoryData)
           ? (Array.isArray(inventoryData[0]) ? inventoryData[0][0] : inventoryData[0])
@@ -52,7 +56,8 @@ const UpdateProductPage = () => {
         if (mounted) {
           setProduct({
             ...productObj,
-            product_stock: inventory?.invent_quantity_available ?? 0
+            product_stock: inventory?.invent_quantity_available ?? 0,
+            original_code: productObj.product_code
           });
           setCategories(categoriesData || []);
           setIsLoading(false);
@@ -70,6 +75,101 @@ const UpdateProductPage = () => {
 
     return () => { mounted = false; };
   }, [id]);
+
+
+  useEffect(() => {
+    if (!product) return;
+
+    const code = product.product_code?.trim();
+    if (!code) {
+      setCodeStatus("");
+      return;
+    }
+
+    const timeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`http://localhost:3000/api/products/check/${code}`);
+        const data = await res.json();
+
+        // Nếu mã tồn tại nhưng không phải chính sản phẩm đang update
+        if (data.exists && code !== product.original_code) {
+          setCodeStatus("Đã tồn tại mã này");
+          setErrors(prev => ({ ...prev, product_code: "Mã sản phẩm đã tồn tại" }));
+        } else {
+          setCodeStatus("Hợp lệ");
+          setErrors(prev => {
+            const newErr = { ...prev };
+            delete newErr.product_code;
+            return newErr;
+          });
+        }
+
+      } catch (err) {
+        console.log(err);
+        setCodeStatus("Lỗi kết nối API");
+      }
+    }, 500);
+
+    return () => clearTimeout(timeout);
+
+  }, [product?.product_code]);
+
+
+
+
+  const validateProduct = () => {
+    const newErrors = {};
+
+
+    if (!product.product_name || product.product_name.trim() === "") {
+      newErrors.product_name = "Tên sản phẩm không được để trống";
+    }
+
+    if (!product.product_category_id) {
+      newErrors.product_category_id = "Loại sản phẩm không được để trống";
+    }
+
+    if (!product.product_code || product.product_code.trim() === "") {
+      newErrors.product_code = "Mã sản phẩm không được để trống";
+    } else if (codeStatus === "Đã tồn tại mã này") {
+      newErrors.product_code = "Mã sản phẩm đã tồn tại";
+    }
+
+
+    if (!product.product_brand) {
+      newErrors.product_brand = "Thương hiệu sản phẩm không được để trống";
+    }
+
+    if (!product.product_base_price || isNaN(product.product_base_price)) {
+
+      newErrors.product_base_price = "Giá sản phẩm không được để trống";
+
+    } else if (product.product_base_price < 0) {
+
+      newErrors.product_base_price = "Giá sản phẩm phải lớn hơn hoặc bằng 0";
+    }
+
+
+
+    if (
+      product.product_stock == null ||
+      product.product_stock === "" ||
+      isNaN(product.product_stock)
+    ) {
+      newErrors.product_stock = "Số lượng không được để trống";
+    } else if (product.product_stock < 0) {
+      newErrors.product_stock = "Số lượng không được là số âm";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0; // valid nếu không có lỗi
+  };
+
+
+
+
+
 
   // Create fields from product state
   const fields = useMemo(() => {
@@ -96,7 +196,7 @@ const UpdateProductPage = () => {
         label: "Brand",
         type: "select",
         placeholder: "Select a brand",
-        options: ["Marvy", "Lobeo", "Phoenix", "Corma", "Copic", "Gelly Roll","Grap Master","Touchliit"].map(b => ({ value: b, label: b })),
+        options: ["Marvy", "Lobeo", "Phoenix", "Corma", "Copic", "Gelly Roll", "Grap Master", "Touchliit"].map(b => ({ value: b, label: b })),
         value: product.product_brand || ""
       },
       {
@@ -154,18 +254,27 @@ const UpdateProductPage = () => {
 
   // Handle save button (keeps your inventory logic; supports uploading images if selected)
   const handleSave = async () => {
+
+    if (!validateProduct()) {
+      return;
+    }
+
     const { product_stock, ...productPayload } = product || {};
 
+
     try {
-      console.log("Sending product:", product);
 
       // If there are new images -> send FormData (do not set Content-Type)
       if (newImages && newImages.length > 0) {
         const formData = new FormData();
+
         Object.keys(productPayload).forEach(key => {
+
           const val = productPayload[key];
+
           if (val !== undefined && val !== null) formData.append(key, val);
         });
+
         newImages.forEach(img => formData.append("images", img)); // backend expects upload.array("images")
 
         const response = await fetch(`http://localhost:3000/api/products/${id}`, {
@@ -175,10 +284,14 @@ const UpdateProductPage = () => {
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
+          if (err.error === "duplicate_code") {
+            setErrors(prev => ({ ...prev, product_code: err.message }));
+            return;
+          }
           throw new Error(err.message || "Failed to update product with images");
         }
       } else {
-        // No new images: send JSON as before
+
         const response = await fetch(`http://localhost:3000/api/products/${id}`, {
           method: 'PUT',
           headers: {
@@ -189,6 +302,14 @@ const UpdateProductPage = () => {
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
+          if (err.error === "duplicate_code") {
+            setErrors(prev => ({
+              ...prev,
+              product_code: err.message || "Product code already exists!"
+            }));
+            return;
+          }
+
           throw new Error(err.message || "Failed to update product");
         }
       }
@@ -200,6 +321,7 @@ const UpdateProductPage = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: product_stock })
         });
+
 
         if (!inventoryResponse.ok) {
           alert('Failed to update inventory');
@@ -223,14 +345,20 @@ const UpdateProductPage = () => {
       }
 
       // Cleanup previews and reset newImages
-      try { previewUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch(e){} }); } catch(e){}
+      try { previewUrls.forEach(u => { try { URL.revokeObjectURL(u); } catch (e) { } }); } catch (e) { }
       setNewImages([]);
       setPreviewUrls([]);
 
-      alert('Product updated successfully!');
+      showToast("Cập nhật phẩm thành công!", "success");
     } catch (error) {
-      console.error('Error updating product:', error);
-      alert('Error updating product: ' + (error.message || 'Unknown error'));
+      if (error?.message) {
+        // Nếu là lỗi mã trùng từ backend
+        if (error.message.includes("tồn tại")) {
+          setErrors(prev => ({ ...prev, product_code: error.message }));
+        }
+      }
+
+        showToast("Lỗi cập nhật sản phẩm!", "error"); 
     }
   };
 
@@ -269,6 +397,9 @@ const UpdateProductPage = () => {
               style={{ position: 'absolute', left: '-9999px' }}
             />
           </div>
+          {errors.newImages && (
+            <p style={{ color: "red", marginTop: "5px" }}>{errors.newImages}</p>
+          )}
 
           {/* preview ảnh mới (nếu user đã chọn) */}
           <div className="preview-images">
@@ -276,6 +407,7 @@ const UpdateProductPage = () => {
               <img key={idx} src={url} alt={`preview-${idx}`} className="preview-thumb" />
             ))}
           </div>
+
         </div>
 
         {/* Form Section */}
@@ -283,6 +415,7 @@ const UpdateProductPage = () => {
           title="Products Description"
           fields={fields}
           onChange={handleFormChange}
+          errors={errors}
         />
 
         {/* Buttons */}

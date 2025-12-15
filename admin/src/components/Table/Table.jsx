@@ -1,8 +1,10 @@
 // src/components/GenericTable.jsx
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
-import './Table.css';
 import { FiMoreHorizontal } from 'react-icons/fi';
+import { useToast } from '../../components/ToastManager/ToastManager'
+import './Table.css';
+
 
 const Table = ({
   columns, // Array of column definitions: { key: 'name', title: 'Name', render: (value, row) => ..., minWidth: '200px' }
@@ -14,6 +16,8 @@ const Table = ({
   idField = 'id' // FIX: Cho phép custom ID field (mặc định 'id')
 }) => {
   const [openMenuIndex, setOpenMenuIndex] = useState(null);
+  const { showToast } = useToast();
+
 
   const toggleMenu = (index) => {
     setOpenMenuIndex(openMenuIndex === index ? null : index);
@@ -47,16 +51,19 @@ const Table = ({
                 <FiMoreHorizontal className="more-icon" onClick={() => toggleMenu(rowIndex)} />
                 {openMenuIndex === rowIndex && (
                   <div className="actions-dropdown">
-                   <p className="dropdown-item" onClic k={() => { if (onView) onView(row); toggleMenu(rowIndex); }}>View</p>
+                    <p className="dropdown-item" onClick={() => {
+                      onView?.(row);
+                      toggleMenu(rowIndex);
+                    }}>View</p>
                     {/* FIX: Dùng idField để lấy đúng ID */}
-                    <Link 
-                      to={`/updateproductpage/${row[idField]}`} 
+                    <Link
+                      to={`/updateproductpage/${row[idField]}`}
                       className="dropdown-item update"
                       onClick={() => toggleMenu(rowIndex)}
                     >
                       Update
                     </Link>
-                    <p className="dropdown-item delete" onClick={() => { if (onDelete) onDelete(row); toggleMenu(rowIndex); }}>Delete</p>
+                    <p className="dropdown-item delete" onClick={() => { if (onDelete) { onDelete(row); showToast("Xóa thành công!", "success"); } toggleMenu(rowIndex); }}>Delete</p>
                   </div>
                 )}
               </div>

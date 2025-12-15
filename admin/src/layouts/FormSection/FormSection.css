@@ -69,3 +69,13 @@
   border: none;
   background-color: white;
 }
+
+.error-input {
+  border: 1px solid red !important;
+}
+
+.error-text {
+  color: red;
+  font-size: 12px;
+  margin-top: 3px;
+}

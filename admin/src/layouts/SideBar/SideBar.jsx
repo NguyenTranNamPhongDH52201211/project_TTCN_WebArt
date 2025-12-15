@@ -20,6 +20,12 @@ const Sidebar = ({
       ]
     },
     {
+      text: "Order",
+      subitems: [
+        { text: "All Order", path: "/orderpage" },
+      ]
+    },
+    {
       text: "User Profile",
       path: "/userprofilepage",
     }

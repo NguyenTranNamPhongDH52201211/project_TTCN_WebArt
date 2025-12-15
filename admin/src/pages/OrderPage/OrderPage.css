@@ -1,0 +1,30 @@
+/* Layout tổng cho admin dashboard */
+.order-layout {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  font-family: sans-serif;
+}
+
+
+/* Phần Header + content bên phải */
+.main-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  overflow-y: auto;
+}
+
+
+
+/* Optional: style scrollbar */
+.main-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 4px;
+}

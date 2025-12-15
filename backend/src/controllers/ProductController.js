@@ -1,5 +1,7 @@
+
 const ProductService = require("../services/ProductServices");
 const ImageService = require("../services/ImagesServices");
+
 
 class ProductController {
   static async getAll(req, res) {
@@ -10,6 +12,7 @@ class ProductController {
       res.status(500).json({ message: err.message });
     }
   }
+
   static async getfilterByParentOfChild(req, res) {
     try {
       const products = await ProductService.getfilterByParentOfChild(
@@ -17,10 +20,23 @@ class ProductController {
       );
       res.json(products);
     } catch (err) {
-      console.error("Lỗi khi load sản phẩm:", err);
       res.status(500).json({ error: err.message });
     }
   }
+
+ static async checkProductCode(req, res) {
+  try {
+    const total = await ProductService.getByCode(req.params.code);
+
+    return res.json({ exists: total > 0 });
+
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+}
+
+
+
   static async getById(req, res) {
     try {
       const product = await ProductService.getProductDetails(req.params.id);
@@ -31,12 +47,13 @@ class ProductController {
     }
   }
 
+
   static async create(req, res) {
     try {
       console.log("REQ BODY:", req.body);
       console.log("REQ FILES:", req.files);
 
-      if (!req.body.product_name || !req.body.product_id) {
+      if (!req.body.product_name) {
         return res.status(400).json({
           message: "Missing required fields: product_name or product_id",
         });
@@ -52,15 +69,12 @@ class ProductController {
         product_description: req.body.product_description,
       };
 
-      const createdProductId = await ProductService.createProduct(productData);
-      const productId = createdProductId || req.body.product_id;
+      const productId = await ProductService.createProduct(productData);
+
 
       let uploadedImages = [];
       if (req.files && req.files.length > 0) {
-        uploadedImages = await ImageService.uploadMultiple(
-          productId,
-          req.files
-        );
+        uploadedImages = await ImageService.uploadMultiple(productId,req.files);
       }
 
       return res.status(201).json({
@@ -69,13 +83,16 @@ class ProductController {
         images: uploadedImages,
       });
     } catch (err) {
-      console.error("CREATE PRODUCT ERROR:", err);
-      return res.status(500).json({
-        message: "Error creating product",
-        error: err.message,
-      });
+       if (err.code === "ER_DUP_ENTRY") {
+        return res.status(400).json({
+            error: "duplicate_code",
+            message: "Mã sản phẩm đã tồn tại"
+        });
+    }
+    return res.status(500).json({ message: err.message });
     }
   }
+
 
   static async update(req, res) {
     try {
@@ -86,14 +103,20 @@ class ProductController {
       );
       res.json(result);
     } catch (err) {
-      res.status(500).json({ message: err.message });
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(400).json({
+            error: "duplicate_code",
+            message: "Mã sản phẩm đã tồn tại"
+        });
+    }
+    return res.status(500).json({ message: err.message });
     }
   }
 
   static async delete(req, res) {
     try {
       await ProductService.deleteProduct(req.params.id);
-      res.json({ message: "Product deleted" });
+      res.json();
     } catch (err) {
       res.status(500).json({ message: err.message });
     }
