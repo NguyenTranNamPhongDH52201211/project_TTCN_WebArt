@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { FiMoreHorizontal } from 'react-icons/fi';
-import {useToast} from '../../components/ToastManager/ToastManager'
+import { useToast } from '../../components/ToastManager/ToastManager'
 import './Table.css';
 
 
@@ -51,16 +51,19 @@ const Table = ({
                 <FiMoreHorizontal className="more-icon" onClick={() => toggleMenu(rowIndex)} />
                 {openMenuIndex === rowIndex && (
                   <div className="actions-dropdown">
-                   <p className="dropdown-item" onClic k={() => { if (onView) onView(row); toggleMenu(rowIndex); }}>View</p>
+                    <p className="dropdown-item" onClick={() => {
+                      onView?.(row);
+                      toggleMenu(rowIndex);
+                    }}>View</p>
                     {/* FIX: Dùng idField để lấy đúng ID */}
-                    <Link 
-                      to={`/updateproductpage/${row[idField]}`} 
+                    <Link
+                      to={`/updateproductpage/${row[idField]}`}
                       className="dropdown-item update"
                       onClick={() => toggleMenu(rowIndex)}
                     >
                       Update
                     </Link>
-                    <p className="dropdown-item delete" onClick={() => { if (onDelete) { onDelete(row); showToast("Xóa thành công!", "success");}  toggleMenu(rowIndex); }}>Delete</p>
+                    <p className="dropdown-item delete" onClick={() => { if (onDelete) { onDelete(row); showToast("Xóa thành công!", "success"); } toggleMenu(rowIndex); }}>Delete</p>
                   </div>
                 )}
               </div>

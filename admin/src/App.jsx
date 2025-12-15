@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 
 import HomePage from './pages/HomePage/HomePage'
 import ProductPage from './pages/ProductPage/ProductPage'
+import OrderPage from './pages/OrderPage/OrderPage';
+import OrderDetailPage from './pages/OrderDetailPage/OrderDetailPage';
 import AddProductPage from './pages/AddProductPage/AddProductPage'
 import UserProfilePage from './pages/UserProfilePage/UserProfilePage'
 import Sidebar from './layouts/SideBar/SideBar';
@@ -32,6 +34,8 @@ function App() {
             <Route path="/addproductpage" element={<AddProductPage />} />
             <Route path="/updateproductpage/:id" element={<UpdateProductPage />} />
             <Route path="/userprofilepage" element={<UserProfilePage />} />
+            <Route path="/orderpage" element={<OrderPage />} />
+           <Route path="/orders/:orderId" element={<OrderDetailPage />} />
           </Routes>
         </div>
       </div>
