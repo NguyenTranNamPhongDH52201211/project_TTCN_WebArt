@@ -2,7 +2,7 @@ const db = require("../config/db");
 
 class AuthenModel {
   static async getUserByEmail(email) {
-    const [rows] = await db.query("SELECT * FROM Users WHERE user_email = ?", [
+    const [rows] = await db.execute("SELECT * FROM Users WHERE user_email = ?", [
       email,
     ]);
     return rows[0] || null;
@@ -17,7 +17,7 @@ class AuthenModel {
     const sql =
       "INSERT INTO Users (user_email, user_password_hash, user_first_name, user_last_name, user_phone) VALUES (?, ?, ?, ?, ?)";
 
-    const [result] = await db.query(sql, [
+    const [result] = await db.execute(sql, [
       email,
       password_hash,
       first_name,

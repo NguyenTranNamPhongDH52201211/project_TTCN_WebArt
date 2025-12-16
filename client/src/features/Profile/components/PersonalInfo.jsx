@@ -1,10 +1,10 @@
 import React, { useContext, useState, useEffect } from "react";
 import styles from "./PersonalInfo.module.css";
-import { AuthContext } from "../../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 export default function PersonalInfo({ user }) {
   const navigate=useNavigate();
-  const { login, logout } = useContext(AuthContext);
+  const { login, logout } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");

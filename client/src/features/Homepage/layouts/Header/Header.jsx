@@ -3,7 +3,7 @@ import styles from "./Header.module.css";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import { FaUser, FaHeart, FaShoppingCart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../../../../context/AuthContext";
+import { useAuth } from "../../../../context/AuthContext";
 import { useCart } from "../../../../context/CartContext"; // import CartContext
 
 export default function Header({
@@ -12,7 +12,7 @@ export default function Header({
   favoritesCount,
  
 }) {
-const { user } = useContext(AuthContext);
+const { user } = useAuth();
   const { toggleSideCart, getCartCount } = useCart();
 
   const cartCount = getCartCount();

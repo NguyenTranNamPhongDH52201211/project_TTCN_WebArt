@@ -1,13 +1,13 @@
 import React, { useContext, useState } from "react";
 import styles from "./PersonalProfile.module.css";
-import { AuthContext } from "../../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router";
 import PersonalInfo from "../components/PersonalInfo";
 import ChangePassword from "../components/ChangePassword";
 
 export default function PersonalProfile() {
   const navigate = useNavigate();
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth();
 
   const [activeTab, setActiveTab] = useState("info"); // info | password
 

@@ -17,7 +17,9 @@ export default function Tabledata({ data }) {
       <tbody>
         {data.map((item) => (
           <TData
-            id={item.id}
+            key={item.cart_item_id}
+            cartItemId={item.cart_item_id}
+            productId={item.id}
             qty={item.qty}
             name={item.name}
             price={item.price}

@@ -1,127 +1,176 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getProducts } from "../api/productService";
+import {
+  getCartByUser,
+  getCartItems,
+  addCartItem,
+  updateCartItemQty,
+  deleteCartItem,
+  clearCartItems,
+} from "../api/cartService";
+import { useAuth } from "./AuthContext";
+
 const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [products, setProducts] = useState([]);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    getProducts().then((data) => setProducts(data));
-  }, []);
-  const [appliedDiscount, setAppliedDiscount] = useState(null); // mã giảm giá đã áp dụng
-  const [shippingFee, setShippingFee] = useState(0); // phí vận chuyển
-  const [cartItems, setCartItems] = useState(() => {
-    const saved = localStorage.getItem("cart");
-    return saved ? JSON.parse(saved) : [];
-  });
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
-  // [{id, qty}]
+  const [products, setProducts] = useState([]);
+  const [cartId, setCartId] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
+  const [appliedDiscount, setAppliedDiscount] = useState(null);
+  const [shippingFee, setShippingFee] = useState(0);
   const [isSideCartOpen, setSideCartOpen] = useState(false);
 
-  // Thêm ID vào giỏ hàng
-  const addToCart = (id, qty = 1) => {
-    setCartItems((prev) => {
-      const exist = prev.find((x) => x.id === id);
-      if (exist) {
-        // Thay vì chỉ +1, cộng với qty truyền vào
-        return prev.map((x) => (x.id === id ? { ...x, qty: x.qty + qty } : x));
-      }
-      return [...prev, { id, qty }]; // thêm mới với qty truyền vào
+  useEffect(() => {
+    getProducts().then(setProducts);
+  }, []);
+
+
+  useEffect(() => {
+    if (!user?.user_id) return;
+
+    const loadCart = async () => {
+      const data = await getCartByUser(user.user_id);
+      setCartId(data.cart_id);
+    };
+
+    loadCart();
+  }, [user]);
+
+
+  useEffect(() => {
+    if (!cartId) return;
+
+    const loadItems = async () => {
+      const data = await getCartItems(cartId);
+      setCartItems(data);
+    };
+
+    loadItems();
+  }, [cartId]);
+
+  const addToCart = async (productId, qty = 1) => {
+    if (!cartId) return;
+
+    const product = products.find((p) => p.id === productId);
+    if (!product) return;
+
+    await addCartItem({
+      cart_id: cartId,
+      product_id: productId,
+      quantity: qty,
+      price: product.price,
     });
+
+    setCartItems(await getCartItems(cartId));
     setSideCartOpen(true);
   };
 
-  const removeFromCart = (id) => {
-    setCartItems((prev) => prev.filter((x) => x.id !== id));
-  };
 
-  const toggleSideCart = () => setSideCartOpen((prev) => !prev);
-  const getDetailedCart = () => {
-    return cartItems
-      .map((item) => {
-        const product = products.find((p) => p.id == item.id); // dùng == để tránh mismatch
-        if (!product) return null; // bỏ qua nếu không tìm thấy
-        return { ...product, qty: item.qty };
-      })
-      .filter(Boolean); // loại bỏ null
-  };
-  const increaseQty = (id) => {
+  const updateQuantity = async (productId, qty) => {
+    if (!cartId || qty <= 0) return;
+
+    await updateCartItemQty({
+      cart_id: cartId,
+      product_id: productId,
+      quantity: qty,
+    });
+
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, qty: item.qty + 1 } : item
+        item.cart_product_id === productId
+          ? { ...item, cart_quantity: qty }
+          : item
       )
     );
   };
-  const decreaseQty = (id) => {
-    setCartItems(
-      (prev) =>
-        prev
-          .map((item) =>
-            item.id === id ? { ...item, qty: item.qty - 1 } : item
-          )
-          .filter((item) => item.qty > 0) // loại bỏ sản phẩm qty = 0
+
+  const increaseQty = (productId) => {
+    const item = cartItems.find((i) => i.cart_product_id === productId);
+    if (item) updateQuantity(productId, item.cart_quantity + 1);
+  };
+
+  const decreaseQty = (productId) => {
+    const item = cartItems.find((i) => i.cart_product_id === productId);
+    if (!item) return;
+    if (item.cart_quantity - 1 <= 0)
+      removeFromCart(item.cart_item_id);
+    else updateQuantity(productId, item.cart_quantity - 1);
+  };
+
+ 
+  const removeFromCart = async (cartItemId) => {
+    await deleteCartItem(cartItemId);
+    setCartItems((prev) =>
+      prev.filter((i) => i.cart_item_id !== cartItemId)
     );
   };
 
-  const parsePrice = (priceStr) => {
-    if (!priceStr) return 0;
-    return Number(priceStr.replace(/[^\d]/g, ""));
-    // loại bỏ tất cả ký tự không phải số, ví dụ: "120.000đ" → 120000
+
+  const clearCart = async () => {
+    if (!cartId) return;
+    await clearCartItems(cartId);
+    setCartItems([]);
   };
 
-  // Thêm hàm này vào bên trong CartProvider, cùng với getDetailedCart
-  const getTotalPrice = () => {
-    return cartItems.reduce((total, item) => {
-      const product = products.find((p) => p.id == item.id);
-      if (!product) return total;
-      const price = parsePrice(product.price);
-      const qty = Number(item.qty) || 0;
-      return total + price * qty;
-    }, 0);
-  };
-  const applyDiscount = (code) => {
-    const discountObj = discounts.find((d) => d.code === code.toUpperCase());
-    if (discountObj) {
-      setAppliedDiscount(discountObj);
-      return true; // áp dụng thành công
-    } else {
-      setAppliedDiscount(null);
-      return false; // mã không hợp lệ
-    }
-  };
 
-  // Tính tổng cuối cùng sau giảm giá + phí vận chuyển
+  const parsePrice = (price) =>
+    Number(String(price).replace(/[^\d]/g, ""));
+
+  const getDetailedCart = () =>
+    cartItems
+      .map((item) => {
+        const product = products.find(
+          (p) => p.id === item.cart_product_id
+        );
+        return product
+          ? {
+              ...product,
+              qty: item.cart_quantity,
+              cart_item_id: item.cart_item_id,
+            }
+          : null;
+      })
+      .filter(Boolean);
+
+  const getTotalPrice = () =>
+    getDetailedCart().reduce(
+      (sum, item) => sum + parsePrice(item.price) * item.qty,
+      0
+    );
+
   const getFinalTotal = () => {
-    const totalPrice = getTotalPrice(); // từ cartItems
-    let discountAmount = 0;
-    if (appliedDiscount) {
-      discountAmount = (totalPrice * appliedDiscount.value) / 100;
-    }
-    return Math.max(totalPrice - discountAmount + shippingFee, 0);
+    const total = getTotalPrice();
+    const discount = appliedDiscount
+      ? (total * appliedDiscount.value) / 100
+      : 0;
+    return Math.max(total - discount + shippingFee, 0);
   };
-  const getCartCount = () => {
-    return cartItems.reduce((total, item) => total + item.qty, 0);
-  };
+
+  const getCartCount = () =>
+    cartItems.reduce((sum, i) => sum + i.cart_quantity, 0);
+
+  const toggleSideCart = () => setSideCartOpen((prev) => !prev);
+
   return (
     <CartContext.Provider
       value={{
         cartItems,
         addToCart,
         removeFromCart,
-        isSideCartOpen,
-        toggleSideCart,
-        getDetailedCart,
+        clearCart,
         increaseQty,
         decreaseQty,
+        getDetailedCart,
         getTotalPrice,
-        applyDiscount,
         getFinalTotal,
+        getCartCount,
+        toggleSideCart,
+        isSideCartOpen,
         appliedDiscount,
         shippingFee,
-        getCartCount
       }}
     >
       {children}

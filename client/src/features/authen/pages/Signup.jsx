@@ -1,11 +1,11 @@
 import styles from "./Signup.module.css";
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../../context/AuthContext";
+import {useAuth } from "../../../context/AuthContext";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { signup } = useContext(AuthContext);
+  const { signup } = useAuth();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
