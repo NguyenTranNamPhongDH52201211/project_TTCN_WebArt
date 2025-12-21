@@ -4,6 +4,7 @@ const productRoutes = require("./src/routes/ProductRoute");
 const categoryRoutes = require("./src/routes/CategoryRoute");
 const inventory = require("./src/routes/InventoryRoute");
 const authen = require("./src/routes/AuthenRoute");
+const user=require("./src/routes/UserRoute")
 const app = express();
 const allowedOrigins = [
   "http://localhost:3001", // client
@@ -30,4 +31,5 @@ app.use("/api/inventory", inventory);
 app.use("/api/category", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/authen", authen);
+app.use("/api/user",user);
 app.listen(3000, () => console.log("Server running at http://localhost:3000"));

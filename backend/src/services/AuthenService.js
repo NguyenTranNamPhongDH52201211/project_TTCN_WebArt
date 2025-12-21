@@ -1,12 +1,13 @@
-const AuthenModel = require("../models/UserModel");
+const UserModel = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
 
 class AuthenService {
+
   static async login(email, password) {
-    const user = await AuthenModel.getUserByEmail(email);
+    const user = await UserModel.getUserByEmail(email);
 
     if (!user || user.user_account_status !== "active") return null;
 
@@ -32,6 +33,7 @@ class AuthenService {
     };
   }
 
+
   static verifyToken(token) {
     try {
       return jwt.verify(token, SECRET_KEY);
@@ -39,40 +41,20 @@ class AuthenService {
       return null;
     }
   }
-  
+
+
   static async signup(data) {
     const { email, password, first_name, last_name, phone } = data;
 
-    // ---- 1. Kiểm tra rỗng ----
-    if (!email || !password || !first_name || !last_name || !phone)
-      return { error: "Vui lòng điền đầy đủ thông tin!" };
-
-    // ---- 2. Validate Email ----
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return { error: "Email không hợp lệ!" };
-
-    // ---- 3. Validate Phone ----
-    const phoneRegex = /^(0[0-9]{9})$/;
-    if (!phoneRegex.test(phone))
-      return { error: "Số điện thoại phải có 10 số và bắt đầu bằng 0!" };
-
-    // ---- 4. Validate Name ----
-    const nameRegex = /^[a-zA-ZÀ-ỹ\s]{2,50}$/;
-    if (!nameRegex.test(first_name + " " + last_name))
-      return { error: "Họ tên không hợp lệ!" };
-
-    // ---- 5. Validate Password ----
-    if (password.length < 6) return { error: "Mật khẩu phải ít nhất 6 ký tự!" };
-
     // ---- 6. Check email đã tồn tại chưa ----
-    const exist = await AuthenModel.getUserByEmail(email);
+    const exist = await UserModel.getUserByEmail(email);
     if (exist) return { error: "Email đã tồn tại!" };
 
     // ---- 7. Hash password ----
     const password_hash = await bcrypt.hash(password, 10);
 
     // ---- 8. Lưu vào DB ----
-    await AuthenModel.createUser({
+    await UserModel.createUser({
       email,
       password_hash,
       first_name,
@@ -82,6 +64,42 @@ class AuthenService {
 
     return { success: true };
   }
+
+  
+
+  static async resetPasswordByToken(token, newPassword) {
+  if (!token || !newPassword) {
+    throw new Error("Thiếu token hoặc mật khẩu mới");
+  }
+
+  if (newPassword.length < 6) {
+    throw new Error("Mật khẩu phải ≥ 6 ký tự");
+  }
+
+  let payload;
+  try {
+    payload = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  } catch (err) {
+    throw new Error("Token không hợp lệ hoặc đã hết hạn");
+  }
+
+  // bảo vệ: đảm bảo token dùng đúng mục đích
+  if (payload.type !== "reset-password") {
+    throw new Error("Token không hợp lệ");
+  }
+
+  const user = await UserModel.getById(payload.user_id);
+  if (!user) {
+    throw new Error("User không tồn tại");
+  }
+
+  const newHash = await bcrypt.hash(newPassword, 10);
+  await UserModel.updatePassword(user.user_id, newHash);
+
+  return true;
+}
+
+
 }
 
 module.exports = AuthenService;

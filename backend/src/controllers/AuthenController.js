@@ -29,10 +29,11 @@ class AuthenController {
     res.json({ user: req.user });
   }
 
-  static logout(req, res) {
-    res.clearCookie("token");
-    res.json({ message: "Đăng xuất thành công" });
-  }
+static async logout(req, res) {
+  res.clearCookie("token");
+  res.json({ message: "Đăng xuất thành công" });
+}
+
   static async signup(req, res) {
     try {
       const result = await AuthenService.signup(req.body);

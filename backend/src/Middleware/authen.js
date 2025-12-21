@@ -1,7 +1,8 @@
 const AuthenService = require("../services/AuthenService");
+
 const authMiddleware = (req, res, next) => {
   
-  const token = req.cookies.token;
+  const token = req.cookies?.token;
   
   if (!token) return next(); // không bắt buộc, để me() xử lý
 

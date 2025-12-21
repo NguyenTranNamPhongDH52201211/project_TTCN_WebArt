@@ -13,14 +13,17 @@ class UserModel {
   //create
   static async createUser(data) {
     const sql =
-      "INSERT INTO Users (user_email, user_password_hash, user_first_name, user_last_name, user_phone,user_role_type,user_account_status,user_email_verified) VALUES (?, ?, ?, ?, ?)";
+      `INSERT INTO Users (user_email, user_password_hash, user_first_name, user_last_name, user_phone, user_role_type, user_account_status, user_email_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const [result] = await db.query(sql, [
       data.email,
       data.password_hash,
-      data.first_name ||null,
-      data.last_name ||null,
-      data.phone ||null,
+      data.first_name || null,
+      data.last_name || null,
+      data.phone || null,
+      'customer',                   
+      'active',                     
+      false
     ]);
 
     return result.insertId;
@@ -28,13 +31,21 @@ class UserModel {
 
   static async getAll() {
     const [rows] = await db.execute(`
-      SELECT *
-      FROM Users
-      ORDER BY user_created_at DESC
-    `);
+    SELECT 
+      user_id,
+      user_email,
+      CONCAT(user_first_name, ' ', user_last_name) as user_full_name,
+      user_phone,
+      user_role_type,
+      user_account_status,
+      user_created_at
+    FROM Users
+    ORDER BY user_created_at DESC
+  `);
 
     return rows;
   }
+
 
   static async getById(user_id) {
     const [rows] = await db.execute(
@@ -44,7 +55,7 @@ class UserModel {
 
     return rows[0] || null;
   }
-  
+
   static async updateProfile(user_id, data) {
     const sql = `
       UPDATE Users SET
@@ -65,7 +76,7 @@ class UserModel {
     return result.affectedRows > 0;
   }
 
-  
+
   static async updatePassword(user_id, user_password_hash) {
     const [result] = await db.execute(
       "UPDATE Users SET user_password_hash = ? WHERE user_id = ?",
@@ -83,7 +94,7 @@ class UserModel {
   }
 
 
-   static async verifyEmail(user_id) {
+  static async verifyEmail(user_id) {
     const [result] = await db.execute(
       "UPDATE Users SET user_email_verified = true WHERE user_id = ?",
       [user_id]
@@ -92,7 +103,7 @@ class UserModel {
     return result.affectedRows > 0;
   }
 
-  
+
   static async updateStatus(user_id, user_account_status) {
     const [result] = await db.execute(
       "UPDATE Users SET user_account_status = ? WHERE user_id = ?",
@@ -102,7 +113,7 @@ class UserModel {
     return result.affectedRows > 0;
   }
 
-   static async updateRole(user_id, user_role_type) {
+  static async updateRole(user_id, user_role_type) {
     const [result] = await db.execute(
       "UPDATE Users SET user_role_type = ? WHERE user_id = ?",
       [user_role_type, user_id]

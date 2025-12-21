@@ -5,8 +5,9 @@ import GenericDashboard from '../GenericDashBoard/GenericDashBoard';
 const ProductDashboard = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     fetchProducts();
@@ -78,19 +79,14 @@ const ProductDashboard = () => {
     // navigate(`/products/${row.product_id}`);
   };
 
-  // ✅ PAGINATION HANDLER
-  const handlePageChange = (page) => {
-    console.log("Page changed to:", page);
-    setCurrentPage(page);
-    // Scroll to top khi đổi page (optional)
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+
 
   // ✅ PHÂN TRANG DATA - Cắt array theo currentPage
   const paginatedProducts = products.slice(
-    (currentPage - 1) * itemsPerPage,  // Start index
-    currentPage * itemsPerPage         // End index
+    (page - 1) * itemsPerPage,  // Start index
+    page * itemsPerPage         // End index
   );
+
   const columns = [
     {
       key: 'product_name', title: 'Products', minWidth: '200px', flex: 2, sortable: true, render: (value, row) => (
@@ -134,16 +130,27 @@ const ProductDashboard = () => {
     <GenericDashboard
       breadcrumb="Home > Product List"
       title="Product List"
-      description="Track your store's progress to boost your sales."
+      subtitle="Track your store's progress to boost your sales."
+      breadcrumbs={[
+        { label: 'Home', path: '/' },
+        { label: 'Product List' }
+      ]}
+      titleView="View"
+      titleUpdate="Update"
+      titleDelete="Delete"
+      updatePath="/updateproductpage/:id"
       columns={columns}
       data={paginatedProducts}
-      currentPage={currentPage}
-      onPageChange={handlePageChange}
-      onView={handleView}
-      onDelete={handleDelete}
+      idField="product_id"
+      currentPage={page}
+      onPageChange={setPage}
+      actions={{
+        view: handleView,
+        delete: handleDelete
+      }}
       totalItems={products.length} // Example total for pagination
       itemsPerPage={itemsPerPage} // As in screenshot
-      addButtonText="Add Product"
+      addButtonPath="/addproductpage"
     // Optional handlers: onExport, onAdd, onFilter
     />
   );

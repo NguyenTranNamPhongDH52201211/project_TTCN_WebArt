@@ -1,37 +1,51 @@
-const userService = require('../services/UserServices');
+const UserService= require("../services/UserServices");
 
 class UserController {
 
-  // POST /users/register
-  async register(req, res) {
+  static async getAll(req, res) {
     try {
-      const {
-        user_email,
-        user_password,
-        user_first_name,
-        user_last_name,
-        user_phone
-      } = req.body;
+      const users = await UserService.getAll();
 
-      if (!user_email || !user_password) {
-        return res.status(400).json({
-          message: 'Email và password là bắt buộc'
-        });
-      }
-
-      const newUser = await userService.createUser({
-        user_email,
-        user_password,
-        user_first_name,
-        user_last_name,
-        user_phone
+      res.status(200).json({
+        success: true,
+        data: users
       });
-
-      return res.status(201).json({
-        message: 'Tạo tài khoản thành công',
-        data: newUser
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get users'
       });
+    }
+  }
 
+  
+  static async getById(req, res) {
+    try {
+      const { id } = req.params;
+
+      const user = await UserService.getById(id);
+
+      return res.status(200).json({
+        data: user
+      });
+    } catch (error) {
+      return res.status(404).json({
+        message: error.message
+      });
+    }
+  }
+
+  
+  static async updateProfile(req, res) {
+    try {
+      const { id } = req.params;
+
+      await UserService.updateProfile(id, req.body);
+
+      return res.status(200).json({
+        message: "Update profile successfully"
+      });
     } catch (error) {
       return res.status(400).json({
         message: error.message
@@ -39,62 +53,17 @@ class UserController {
     }
   }
 
-  // GET /users
-  async getAll(req, res) {
-    try {
-      const users = await userService.getAllUsers();
-      return res.json(users);
-    } catch (error) {
-      return res.status(500).json({
-        message: error.message
-      });
-    }
-  }
-
-  // GET /users/:id
-  async getById(req, res) {
+  
+  static async changePassword(req, res) {
     try {
       const { id } = req.params;
-      const user = await userService.getUserById(id);
+      const { oldPassword, newPassword } = req.body;
 
-      if (!user) {
-        return res.status(404).json({
-          message: 'Không tìm thấy user'
-        });
-      }
+      await UserService.changePassword(id, oldPassword, newPassword);
 
-      return res.json(user);
-
-    } catch (error) {
-      return res.status(500).json({
-        message: error.message
+      return res.status(200).json({
+        message: "Change password successfully"
       });
-    }
-  }
-
-  // PUT /users/:id
-  async update(req, res) {
-    try {
-      const { id } = req.params;
-      const {
-        user_first_name,
-        user_last_name,
-        user_phone,
-        user_account_status
-      } = req.body;
-
-      const updated = await userService.updateUser(id, {
-        user_first_name,
-        user_last_name,
-        user_phone,
-        user_account_status
-      });
-
-      return res.json({
-        message: 'Cập nhật user thành công',
-        data: updated
-      });
-
     } catch (error) {
       return res.status(400).json({
         message: error.message
@@ -102,16 +71,52 @@ class UserController {
     }
   }
 
-  // DELETE /users/:id
-  async delete(req, res) {
+ 
+  static async updateStatus(req, res) {
     try {
       const { id } = req.params;
-      await userService.deleteUser(id);
+      const { status } = req.body;
 
-      return res.json({
-        message: 'Xóa user thành công'
+      await UserService.updateStatus(id, status);
+
+      return res.status(200).json({
+        message: "Update status successfully"
       });
+    } catch (error) {
+      return res.status(400).json({
+        message: error.message
+      });
+    }
+  }
 
+ 
+  static async updateRole(req, res) {
+    try {
+      const { id } = req.params;
+      const { role } = req.body;
+
+      await UserService.updateRole(id, role);
+
+      return res.status(200).json({
+        message: "Update role successfully"
+      });
+    } catch (error) {
+      return res.status(400).json({
+        message: error.message
+      });
+    }
+  }
+
+ 
+  static async deactivate(req, res) {
+    try {
+      const { id } = req.params;
+
+      await UserService.deactivate(id);
+
+      return res.status(200).json({
+        message: "User deactivated successfully"
+      });
     } catch (error) {
       return res.status(400).json({
         message: error.message
