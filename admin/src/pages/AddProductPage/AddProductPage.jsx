@@ -14,7 +14,8 @@ const AddProductPage = () => {
     const [codeStatus, setCodeStatus] = useState("");
     const [errors, setErrors] = useState({});
     const {showToast} = useToast();
-    const [productData, setProductData] = useState({
+     const fileInputRef = useRef(null);
+     const initialProductData = {
         product_name: "",
         product_category_id: "",
         product_brand: "",
@@ -23,7 +24,8 @@ const AddProductPage = () => {
         product_base_price: "",
         invent_quantity_available: 0,
         product_description: ""
-    });
+    };
+      const [productData, setProductData] = useState(initialProductData);
 
     useEffect(() => {
         fetch("http://localhost:3000/api/category")
@@ -62,7 +64,25 @@ const AddProductPage = () => {
         return () => clearTimeout(timeout);
     }, [productData.product_code]);
 
+    const resetForm=()=>{
+        setProductData(initialProductData);
+        
+        setImages([]);
+        
+        // Xóa lỗi
+        setErrors({});
+        
+        // Reset trạng thái mã sản phẩm
+        setCodeStatus("");
+        
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
 
+        
+    
     const validate = () => {
         const newErrors = {};
 
@@ -176,6 +196,7 @@ const AddProductPage = () => {
                 })
             });
            showToast("Thêm sản phẩm thành công!", "success");
+           resetForm();
 
         } catch (error) {
             console.log("Error", error);

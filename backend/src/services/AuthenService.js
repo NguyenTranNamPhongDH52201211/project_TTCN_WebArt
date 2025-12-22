@@ -1,4 +1,4 @@
-const AuthenModel = require("../models/AuthenModel");
+const UserModel = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -12,6 +12,7 @@ class AuthenService {
 
     const user = await AuthenModel.getUserByEmail(email);
     if (!user || user.user_account_status !== "active") return null;
+
 
     const match = await bcrypt.compare(password, user.user_password_hash);
     if (!match) return null;
@@ -32,6 +33,7 @@ class AuthenService {
       token,
     };
   }
+
 
   // SIGNUP
   static async signup(data) {

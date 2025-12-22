@@ -6,7 +6,7 @@ const OrderDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  const itemsPerPage = 7;
+  const itemsPerPage = 5;
 
   // MOCK DATA (sau này thay bằng API)
   const orders = [

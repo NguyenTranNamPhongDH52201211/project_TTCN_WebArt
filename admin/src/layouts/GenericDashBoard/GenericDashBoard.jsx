@@ -5,37 +5,41 @@ import { FiPlus, FiSliders } from 'react-icons/fi';
 import Table from '../../components/Table/Table';
 import Pagination from '../../components/Pagination/Pagination';
 import Button from '../../components/Button/Button';
-import SearchBar from '../../components/SearchBar/SearchBar'
+import SearchBar from '../../components/SearchBar/SearchBar';
 import './GenericDashboard.css';
+
 const GenericDashboard = ({
-  // Page info
+  /* ===== Page info ===== */
   title,
   subtitle,
   breadcrumbs = [],
 
-  // Table
+  /* ===== Table ===== */
   columns,
-  data,
-  idField = "id",
-  showCheckbox = true,
+  data = [],
+  idField,
+  
+  showCheckbox = false,
+  actions = {}, // { view, edit, delete, deactivate }
+  titleView,
+  titleUpdate,
+  titleDelete,
+  viewPath,
+  updatePath,
 
-  // Actions
-  onView,
-  onDelete,
-
-  // Add button
-  showAddButton = true,
-  addButtonText = "Add",
+  /* ===== Add button ===== */
+  showAddButton = false,
+  addButtonText = 'Add',
   addButtonPath,
 
-  // Pagination
+  /* ===== Pagination ===== */
   currentPage = 1,
   totalItems = 0,
-  itemsPerPage = 5,
+  itemsPerPage = 10,
   onPageChange,
 
-  // Search & Filter
-  showSearch = true,
+  /* ===== Search & Filter ===== */
+  searchPlaceholder = 'Search...',
   onSearch,
   onFilter,
 }) => {
@@ -47,32 +51,29 @@ const GenericDashboard = ({
 
   return (
     <div className="generic-dashboard">
-      {/* Page Header */}
+      {/* ===== Page Header ===== */}
       <div className="dashboard-page-header">
         <h1 className="page-title">{title}</h1>
 
-        <div className="breadcrumb">
-          {breadcrumbs.map((crumb, index) => (
-            <span key={index}>
-              {crumb.path ? (
-                <span
-                  className="breadcrumb-link"
-                  onClick={() => navigate(crumb.path)}
-                >
-                  {crumb.label}
-                </span>
-              ) : (
-                crumb.label
-              )}
-              {index < breadcrumbs.length - 1 && " > "}
-            </span>
-          ))}
-        </div>
+        {breadcrumbs.length > 0 && (
+          <div className="breadcrumb">
+            {breadcrumbs.map((crumb, index) => (
+              <span key={index}>
+                {crumb.path ? (
+                  <a href={crumb.path}>{crumb.label}</a>
+                ) : (
+                  crumb.label
+                )}
+                {index < breadcrumbs.length - 1 && ' > '}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Content Card */}
+      {/* ===== Content Card ===== */}
       <div className="dashboard-card">
-        {/* Card Header */}
+        {/* ===== Card Header ===== */}
         <div className="card-header">
           <div className="card-header-left">
             <h2 className="card-title">{title}</h2>
@@ -91,10 +92,16 @@ const GenericDashboard = ({
           )}
         </div>
 
-        {/* Search & Filter */}
-        {(showSearch || onFilter) && (
+        {/* ===== Search & Filter ===== */}
+        {(onSearch || onFilter) && (
           <div className="search-filter-bar">
-            {showSearch && <SearchBar onSearch={onSearch} />}
+            {onSearch && (
+              <SearchBar
+                placeholder={searchPlaceholder}
+                onSearch={onSearch}
+              />
+            )}
+
             {onFilter && (
               <Button
                 text="Filter"
@@ -106,19 +113,24 @@ const GenericDashboard = ({
           </div>
         )}
 
-        {/* Table */}
+        {/* ===== Table ===== */}
         <Table
           columns={columns}
           data={data}
           idField={idField}
           showCheckbox={showCheckbox}
-          showActions={true}
-          onView={onView}
-          onDelete={onDelete}
+          actions={actions}
+          titleView={titleView}
+          titleUpdate={titleUpdate}
+          titleDelete={titleDelete}
+          viewPath={viewPath}
+          updatePath={updatePath}
+          onView={actions?.view}
+          onDelete={actions?.delete || actions?.deactivate}
         />
 
-        {/* Pagination */}
-        {totalItems > 0 && (
+        {/* ===== Pagination ===== */}
+        {totalItems > itemsPerPage && (
           <Pagination
             currentPage={currentPage}
             totalItems={totalItems}

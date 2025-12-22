@@ -11,7 +11,12 @@ const Table = ({
   data, // Array of data objects
   showCheckbox = true, // Optional: Show checkbox column
   showActions = true, // Optional: Show actions column with ...
+  titleView,
+  titleUpdate,
+  titleDelete,
   onView, // Optional: (row) => ... handler for View
+  viewPath,
+  updatePath,
   onDelete, // Optional: (row) => ... handler for Delete
   idField = 'id' // FIX: Cho phép custom ID field (mặc định 'id')
 }) => {
@@ -51,19 +56,37 @@ const Table = ({
                 <FiMoreHorizontal className="more-icon" onClick={() => toggleMenu(rowIndex)} />
                 {openMenuIndex === rowIndex && (
                   <div className="actions-dropdown">
-                    <p className="dropdown-item" onClick={() => {
-                      onView?.(row);
-                      toggleMenu(rowIndex);
-                    }}>View</p>
-                    {/* FIX: Dùng idField để lấy đúng ID */}
-                    <Link
-                      to={`/updateproductpage/${row[idField]}`}
-                      className="dropdown-item update"
-                      onClick={() => toggleMenu(rowIndex)}
-                    >
-                      Update
-                    </Link>
-                    <p className="dropdown-item delete" onClick={() => { if (onDelete) { onDelete(row); showToast("Xóa thành công!", "success"); } toggleMenu(rowIndex); }}>Delete</p>
+                   {viewPath && (
+                      <Link 
+                        to={viewPath.replace(':id', row[idField])}
+                        className="dropdown-item"
+                        onClick={() => {
+                          onView?.(row);
+                          toggleMenu(rowIndex);
+                        }}
+                      >
+                        {titleView}
+                      </Link>
+                    )}
+                    
+                    {updatePath && (
+                      <Link
+                        to={updatePath.replace(':id', row[idField])}
+                        className="dropdown-item update"
+                        onClick={() => toggleMenu(rowIndex)}
+                      >
+                        {titleUpdate}
+                      </Link>
+                    )}
+                    {onDelete && (
+                      <p className="dropdown-item delete" onClick={() => { 
+                        onDelete(row); 
+                        showToast("Xóa thành công!", "success"); 
+                        toggleMenu(rowIndex); 
+                      }}>
+                        {titleDelete}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>

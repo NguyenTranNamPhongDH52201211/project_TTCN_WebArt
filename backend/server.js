@@ -29,6 +29,17 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    origin: (origin, callback) => {
+      // cho Postman, server gọi
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
   })
 );
 
