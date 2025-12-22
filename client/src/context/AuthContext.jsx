@@ -9,6 +9,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // ⭐ THÊM
 
   
   useEffect(() => {
@@ -18,6 +19,8 @@ export const AuthProvider = ({ children }) => {
         if (res.data.user) setUser(res.data.user);
       } catch (err) {
         setUser(null);
+      }finally{
+        setLoading(false)
       }
     };
     loadUser();
@@ -94,6 +97,7 @@ export const AuthProvider = ({ children }) => {
       value={{
         user,
         login,
+        loading, 
         signup,
         loginWithGoogle,
         loginWithFacebook,

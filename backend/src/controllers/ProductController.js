@@ -40,7 +40,6 @@ class ProductController {
   static async getById(req, res) {
     try {
       const product = await ProductService.getProductDetails(req.params.id);
-      console.log(req.params.id);
       res.json(product);
     } catch (error) {
       res.status(404).json({ message: error.message });

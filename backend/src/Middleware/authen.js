@@ -1,19 +1,19 @@
 const AuthenService = require("../services/AuthenService");
 
 const authMiddleware = (req, res, next) => {
-  
-  const token = req.cookies?.token;
-  
-  if (!token) return next(); // không bắt buộc, để me() xử lý
+  if (!req.cookies) return next();
+
+  const token = req.cookies.token;
+  if (!token) return next();
 
   const decoded = AuthenService.verifyToken(token);
 
   if (!decoded) return next();
 
-  req.user = decoded;
-
+  req.userId = decoded.user_id;
   next();
 
 };
 
-module.exports=authMiddleware;
+
+module.exports = authMiddleware;

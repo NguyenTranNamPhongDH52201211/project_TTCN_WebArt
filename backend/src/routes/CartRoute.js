@@ -1,11 +1,16 @@
+// routes/cartRoutes.js
 const express = require("express");
 const CartController = require("../controllers/CartController");
+const authMiddleware = require("../Middleware/authen");
+const cartMiddleware = require("../Middleware/cart");
+
 const router = express.Router();
 
-// Lấy giỏ hàng của user
-router.get("/:user_id", CartController.getCart);
-
-// Tạo giỏ hàng mới
-router.post("/", CartController.createCart);
+router.get(
+  "/",
+  authMiddleware,   
+  cartMiddleware,   
+  CartController.getCart
+);
 
 module.exports = router;

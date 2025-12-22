@@ -1,36 +1,41 @@
 const db = require("../config/db");
+const { v4: uuidv4 } = require("uuid");
 
 class PaymentModel {
+  static async create({ orderId, method, amount }) {
+    const paymentId = uuidv4();
 
-    static async createPayment(payment) {
-        const {
-            payment_id,
-            order_id,
-            amount,
-            method
-        } = payment;
+    await db.query(
+      `INSERT INTO Payment
+      (payment_id, payment_order_id, payment_method, payment_amount)
+      VALUES (?, ?, ?, ?)`,
+      [paymentId, orderId, method, amount]
+    );
 
-        const [result] = await db.execute(
-            `INSERT INTO Payment (
-                payment_id,
-                payment_order_id,
-                payment_method,
-                payment_amount,
-                payment_status
-            ) VALUES (?, ?, ?, ?, 'pending')`,
-            [payment_id, order_id, method, amount]
-        );
+    return paymentId;
+  }
 
-        return result;
-    }
+  static async complete({ orderId, transactionId, details }) {
+    await db.query(
+      `UPDATE Payment
+       SET payment_status='completed',
+           payment_transaction_id=?,
+           payment_date=NOW(),
+           payment_details=?
+       WHERE payment_order_id=?`,
+      [transactionId, JSON.stringify(details), orderId]
+    );
+  }
 
-    static async updateStatus(order_id, status) {
-        const [result] = await db.execute(
-            "UPDATE Payment SET payment_status = ? WHERE payment_order_id = ?",
-            [status, order_id]
-        );
-        return result;
-    }
+  static async fail(orderId, details) {
+    await db.query(
+      `UPDATE Payment
+       SET payment_status='failed',
+           payment_details=?
+       WHERE payment_order_id=?`,
+      [JSON.stringify(details), orderId]
+    );
+  }
 }
 
 module.exports = PaymentModel;

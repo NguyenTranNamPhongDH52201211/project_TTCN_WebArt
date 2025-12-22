@@ -1,10 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const cookieParser = require("cookie-parser");
 const AuthenController = require("../controllers/AuthenController");
 const authMiddleware = require("../Middleware/authen");
 
-router.use(cookieParser());
 
 // Login
 router.post("/login", AuthenController.login);
