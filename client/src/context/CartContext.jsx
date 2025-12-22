@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getProducts } from "../api/productService";
 import {
-  getCartByUser,
-  getCartItems,
+  getCart,
   addCartItem,
   updateCartItemQty,
   deleteCartItem,
@@ -17,107 +16,120 @@ export const CartProvider = ({ children }) => {
   const { user } = useAuth();
 
   const [products, setProducts] = useState([]);
-  const [cartId, setCartId] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [appliedDiscount, setAppliedDiscount] = useState(null);
   const [shippingFee, setShippingFee] = useState(0);
   const [isSideCartOpen, setSideCartOpen] = useState(false);
 
+  // 🔹 Load products
   useEffect(() => {
-    getProducts().then(setProducts);
+    const loadProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch (err) {
+        console.error("Load products failed:", err);
+      }
+    };
+
+    loadProducts();
   }, []);
 
-
+  // 🔹 Load cart (guest + user)
   useEffect(() => {
-    if (!user?.user_id) return;
-
     const loadCart = async () => {
-      const data = await getCartByUser(user.user_id);
-      setCartId(data.cart_id);
+      try {
+        const cart = await getCart();
+        setCartItems(cart.items || []);
+      } catch (err) {
+        console.error("Load cart failed:", err);
+        setCartItems([]);
+      }
     };
 
     loadCart();
   }, [user]);
 
-
-  useEffect(() => {
-    if (!cartId) return;
-
-    const loadItems = async () => {
-      const data = await getCartItems(cartId);
-      setCartItems(data);
-    };
-
-    loadItems();
-  }, [cartId]);
-
+  // ➕ Add to cart
   const addToCart = async (productId, qty = 1) => {
-    if (!cartId) return;
+    try {
+      const product = products.find((p) => p.id === productId);
+      if (!product) return;
 
-    const product = products.find((p) => p.id === productId);
-    if (!product) return;
-
-    await addCartItem({
-      cart_id: cartId,
-      product_id: productId,
-      quantity: qty,
-      price: product.price,
-    });
-
-    setCartItems(await getCartItems(cartId));
-    setSideCartOpen(true);
+      await addCartItem({
+        product_id: productId,
+        quantity: qty,
+        price: product.price,
+      });
+       
+      const cart = await getCart();
+      setCartItems(cart.items || []);
+      setSideCartOpen(true);
+    } catch (err) {
+      console.error("Add to cart failed:", err);
+    }
   };
 
+  // ✏️ Update quantity
+  const updateQuantity = async (cartItemId, qty) => {
+    try {
+      if (qty <= 0) return removeFromCart(cartItemId);
 
-  const updateQuantity = async (productId, qty) => {
-    if (!cartId || qty <= 0) return;
+      await updateCartItemQty({
+        cart_item_id: cartItemId,
+        quantity: qty,
+      });
 
-    await updateCartItemQty({
-      cart_id: cartId,
-      product_id: productId,
-      quantity: qty,
-    });
-
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.cart_product_id === productId
-          ? { ...item, cart_quantity: qty }
-          : item
-      )
-    );
+      setCartItems((prev) =>
+        prev.map((i) =>
+          i.cart_item_id === cartItemId
+            ? { ...i, cart_quantity: qty }
+            : i
+        )
+      );
+    } catch (err) {
+      console.error("Update quantity failed:", err);
+    }
   };
 
+  // ➕➖ Increase / Decrease (không cần try–catch)
   const increaseQty = (productId) => {
     const item = cartItems.find((i) => i.cart_product_id === productId);
-    if (item) updateQuantity(productId, item.cart_quantity + 1);
+    if (item) updateQuantity(item.cart_item_id, item.cart_quantity + 1);
   };
 
   const decreaseQty = (productId) => {
     const item = cartItems.find((i) => i.cart_product_id === productId);
     if (!item) return;
+
     if (item.cart_quantity - 1 <= 0)
       removeFromCart(item.cart_item_id);
-    else updateQuantity(productId, item.cart_quantity - 1);
+    else
+      updateQuantity(item.cart_item_id, item.cart_quantity - 1);
   };
 
- 
+  // ❌ Remove item
   const removeFromCart = async (cartItemId) => {
-    await deleteCartItem(cartItemId);
-    setCartItems((prev) =>
-      prev.filter((i) => i.cart_item_id !== cartItemId)
-    );
+    try {
+      await deleteCartItem(cartItemId);
+      setCartItems((prev) =>
+        prev.filter((i) => i.cart_item_id !== cartItemId)
+      );
+    } catch (err) {
+      console.error("Remove item failed:", err);
+    }
   };
-
 
   const clearCart = async () => {
-    if (!cartId) return;
-    await clearCartItems(cartId);
-    setCartItems([]);
+    try {
+      await clearCartItems();
+      setCartItems([]);
+    } catch (err) {
+      console.error("Clear cart failed:", err);
+    }
   };
 
 
-  const parsePrice = (price) =>
-    Number(String(price).replace(/[^\d]/g, ""));
 
   const getDetailedCart = () =>
     cartItems
@@ -137,7 +149,7 @@ export const CartProvider = ({ children }) => {
 
   const getTotalPrice = () =>
     getDetailedCart().reduce(
-      (sum, item) => sum + parsePrice(item.price) * item.qty,
+      (sum, item) => sum + item.price * item.qty,
       0
     );
 
@@ -152,7 +164,8 @@ export const CartProvider = ({ children }) => {
   const getCartCount = () =>
     cartItems.reduce((sum, i) => sum + i.cart_quantity, 0);
 
-  const toggleSideCart = () => setSideCartOpen((prev) => !prev);
+  const toggleSideCart = () =>
+    setSideCartOpen((prev) => !prev);
 
   return (
     <CartContext.Provider

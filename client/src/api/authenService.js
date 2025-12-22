@@ -8,6 +8,11 @@ export const fetchMe = () => {
     withCredentials: true,
   });
 };
+export const updateProfileApi = (body) => {
+  return axios.put(`${API_URL}/me`, body, {
+    withCredentials: true,
+  });
+};
 
 export const signupApi = (body) => {
   return axios.post(`${API_URL}/signup`, body, {

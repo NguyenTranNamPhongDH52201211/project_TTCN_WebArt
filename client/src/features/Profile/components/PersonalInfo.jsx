@@ -1,12 +1,14 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./PersonalInfo.module.css";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-export default function PersonalInfo({ user }) {
-  const navigate=useNavigate();
-  const { login, logout } = useAuth();
+import { updateProfileApi } from "../../../api/authenService";
+export default function PersonalInfo() {
+  const navigate = useNavigate();
+  const { user, loading, logout, setUser } = useAuth();
 
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [tel, setTel] = useState("");
   const [avatar, setAvatar] = useState(null);
@@ -14,115 +16,110 @@ export default function PersonalInfo({ user }) {
   const [isEditing, setIsEditing] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
+  // Load dữ liệu từ AuthContext (DB)
   useEffect(() => {
     if (user) {
-      setName(user.name);
-      setEmail(user.email);
-      setTel(user.tel);
-      setAvatar(user.avatar);
+      setFirstName(user.user_first_name || "");
+      setLastName(user.user_last_name || "");
+      setEmail(user.user_email || "");
+      setTel(user.user_phone || "");
     }
   }, [user]);
+
+  if (loading) return <p>Đang tải...</p>;
+  if (!user) return <p>Chưa đăng nhập</p>;
 
   const previewAvatar = (e) => {
     const file = e.target.files[0];
     if (file) setAvatar(URL.createObjectURL(file));
   };
 
-  const onClickChangeData = () => setIsEditing(true);
+  const onSave = async () => {
+    const body = {
+      first_name: firstName,
+      last_name: lastName,
+      phone: tel,
+    };
 
-  const onSave = () => {
-    const updatedUser = { ...user, name, email, tel, avatar };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    login(updatedUser);
+    const res = await updateProfileApi(body);
+
+    // 🔥 Update lại AuthContext
+    setUser(res.data.user);
 
     setIsEditing(false);
     setShowDialog(true);
   };
-  const onLogoutClick=()=>{
-    logout();
+
+  const onLogoutClick = async () => {
+    await logout();
     navigate("/");
-  }
+  };
+
   return (
     <div className={styles["profile-content"]}>
       <h3>Thông tin cá nhân</h3>
 
       <div className={styles["avatar-section"]}>
         <div className={styles["avatar-preview"]}>
-          <img src={avatar} alt="Avatar" />
+          <img src={avatar || "/default-avatar.png"} alt="Avatar" />
         </div>
 
-        <div>
-          <label
-            htmlFor="avatarUpload"
-            className={styles["upload-btn"]}
-            style={{
-              opacity: isEditing ? 1 : 0.5,
-              pointerEvents: isEditing ? "auto" : "none",
-            }}
-          >
-            Chọn ảnh
-          </label>
-
+        <label
+          className={styles["upload-btn"]}
+          style={{ opacity: isEditing ? 1 : 0.5 }}
+        >
+          Chọn ảnh
           <input
             type="file"
-            id="avatarUpload"
+            hidden
+            disabled={!isEditing}
             accept="image/*"
             onChange={previewAvatar}
-            style={{ display: "none" }}
           />
-        </div>
+        </label>
       </div>
 
       <div className={styles["form-group"]}>
-        <label>Họ & tên</label>
+        <label>Họ</label>
         <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={firstName}
+          onChange={(e) => setFirstName(e.target.value)}
           readOnly={!isEditing}
-          className={isEditing ? styles.editable : styles.readonly}
+        />
+      </div>
+
+      <div className={styles["form-group"]}>
+        <label>Tên</label>
+        <input
+          value={lastName}
+          onChange={(e) => setLastName(e.target.value)}
+          readOnly={!isEditing}
         />
       </div>
 
       <div className={styles["form-group"]}>
         <label>Email</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          readOnly={!isEditing}
-          className={isEditing ? styles.editable : styles.readonly}
-        />
+        <input value={email} readOnly />
       </div>
 
       <div className={styles["form-group"]}>
         <label>Số điện thoại</label>
         <input
-          type="tel"
           value={tel}
           onChange={(e) => setTel(e.target.value)}
           readOnly={!isEditing}
-          className={isEditing ? styles.editable : styles.readonly}
         />
       </div>
 
       {!isEditing ? (
         <>
-          <button className={styles["change-btn"]} onClick={onClickChangeData}>
-            Thay đổi thông tin
-          </button>
-          <button className={styles["logout-btn"]} onClick={onLogoutClick}>
-            Đăng xuất
-          </button>
+          <button onClick={() => setIsEditing(true)}>Thay đổi thông tin</button>
+          <button onClick={onLogoutClick}>Đăng xuất</button>
         </>
       ) : (
         <>
-          <button className={styles["save-btn"]} onClick={onSave}>
-            Lưu thay đổi
-          </button>
-          <button className={styles["logout-btn"]} onClick={onLogoutClick}>
-            Đăng xuất
-          </button>
+          <button onClick={onSave}>Lưu thay đổi</button>
+          <button onClick={onLogoutClick}>Đăng xuất</button>
         </>
       )}
 
@@ -130,7 +127,6 @@ export default function PersonalInfo({ user }) {
         <div className={styles["dialog-overlay"]}>
           <div className={styles["dialog-box"]}>
             <h4>✔ Lưu thành công!</h4>
-            <p>Thông tin của bạn đã được cập nhật.</p>
             <button onClick={() => setShowDialog(false)}>Đóng</button>
           </div>
         </div>

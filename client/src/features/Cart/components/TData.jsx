@@ -4,6 +4,7 @@ import React from "react";
 import { useCart } from "../../../context/CartContext.jsx";
 import { FaTrash } from "react-icons/fa"; // import icon thùng rác
 import defaultImage from "../../../assets/Productimage/thumb1.png";
+import { formatVND } from "../../../helpers/formatVND.js";
 export default function TData({
   cartItemId,
   productId,
@@ -13,9 +14,8 @@ export default function TData({
   qty,
 }) {
   const { increaseQty, decreaseQty, removeFromCart } = useCart();
-  const formatPrice = (value) => {
-    return value.toLocaleString("vi-VN") + " ₫";
-  };
+
+
   return (
     <tr className={styles["data-container"]}>
       <td className={styles["img-name"]}>
@@ -24,7 +24,7 @@ export default function TData({
           <p>{name}</p>
         </div>
       </td>
-      <td className={styles["price"]}>{formatPrice(price)}</td>
+      <td className={styles["price"]}>{formatVND(price)}</td>
       <td>
         <Amount
           qty={qty}

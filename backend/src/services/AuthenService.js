@@ -1,11 +1,11 @@
 const AuthenModel = require("../models/AuthenModel");
+const OrderModel = require("../models/OrderModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const SECRET_KEY = process.env.ACCESS_TOKEN_SECRET;
 
 class AuthenService {
-
   // LOGIN
   static async login(email, password) {
     if (!email || !password) throw new Error("Email và mật khẩu là bắt buộc");
@@ -21,6 +21,7 @@ class AuthenService {
       SECRET_KEY,
       { expiresIn: "1d" }
     );
+    await OrderModel.mergeGuestOrders(user.user_id, user.user_email);
 
     return {
       user: {
@@ -89,6 +90,19 @@ class AuthenService {
   // LOGOUT (chỉ trả cookie rỗng)
   static logout(res) {
     res.clearCookie("token");
+  }
+  static async getUserById(userId) {
+    const user = await AuthenModel.getUserById(userId);
+    if (!user) return null;
+
+    return {
+      user_id: user.user_id,
+      user_email: user.user_email,
+      user_first_name: user.user_first_name,
+      user_last_name: user.user_last_name,
+      user_phone: user.user_phone,
+      user_role_type: user.user_role_type,
+    };
   }
 }
 module.exports = AuthenService;

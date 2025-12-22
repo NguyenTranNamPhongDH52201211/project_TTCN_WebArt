@@ -1,7 +1,6 @@
 const AuthenService = require("../services/AuthenService");
 
 class AuthenController {
-
   static async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -39,8 +38,18 @@ class AuthenController {
   }
 
   static async me(req, res) {
-    if (!req.user) return res.status(401).json({ message: "Chưa đăng nhập" });
-    res.json({ user: req.user });
+    try {
+      if (!req.userId)
+        return res.status(401).json({ message: "Chưa đăng nhập" });
+
+      const user = await AuthenService.getUserById(req.userId);
+      if (!user) return res.status(404).json({ message: "User không tồn tại" });
+
+      res.json({ user });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
   }
 
   static logout(req, res) {

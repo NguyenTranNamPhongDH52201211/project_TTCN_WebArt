@@ -1,7 +1,6 @@
 const CartItemModel = require("../models/CartItemModel");
 
 class CartItemService {
-
   // Lấy tất cả item của cart
   static async getItemsByCartId(cart_id) {
     return await CartItemModel.getByCartId(cart_id);
@@ -39,6 +38,10 @@ class CartItemService {
   // Xóa toàn bộ item theo cart_id
   static async clearCart(cart_id) {
     return await CartItemModel.deleteByCartId(cart_id);
+  }
+  static async updateByItemId(cart_item_id, quantity) {
+    if (quantity <= 0) throw new Error("quantity phải > 0");
+    return await CartItemModel.update(cart_item_id, quantity);
   }
 }
 
