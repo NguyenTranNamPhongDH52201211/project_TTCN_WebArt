@@ -1,35 +1,55 @@
 const db = require("../config/db");
 
 class UserModel {
+  static async getUserByEmail(email) {
+    const [rows] = await db.execute(
+      "SELECT * FROM Users WHERE user_email = ?",
+      [email]
+    );
+    return rows[0] || null;
+  }
+  static async createUser({
+    email,
+    password_hash,
+    first_name,
+    last_name,
+    phone,
+  }) {
+    const sql =
+      "INSERT INTO Users (user_email, user_password_hash, user_first_name, user_last_name, user_phone) VALUES (?, ?, ?, ?, ?)";
 
-  //getUserByEmail
-  static async getUserByEmail(user_email) {
-    const [rows] = await db.query("SELECT * FROM Users WHERE user_email = ? LIMIT 1", [
-      user_email
+    const [result] = await db.execute(sql, [
+      email,
+      password_hash,
+      first_name,
+      last_name,
+      phone,
     ]);
+
+    return result;
+  }
+
+  static async getUserById(userId) {
+    const [rows] = await db.execute(
+      `
+      SELECT 
+        user_id,
+        user_email,
+        user_first_name,
+        user_last_name,
+        user_phone,
+        user_role_type,
+        user_account_status
+      FROM Users
+      WHERE user_id = ?
+      `,
+      [userId]
+    );
+
     return rows[0] || null;
   }
 
-  //create
-  static async createUser(data) {
-    const sql =
-      `INSERT INTO Users (user_email, user_password_hash, user_first_name, user_last_name, user_phone, user_role_type, user_account_status, user_email_verified) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    const [result] = await db.query(sql, [
-      data.email,
-      data.password_hash,
-      data.first_name || null,
-      data.last_name || null,
-      data.phone || null,
-      'customer',                   
-      'active',                     
-      false
-    ]);
-
-    return result.insertId;
-  }
-
-  static async getAll() {
+   static async getAll() {
     const [rows] = await db.execute(`
     SELECT 
       user_id,

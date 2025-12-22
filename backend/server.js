@@ -12,6 +12,8 @@ const order = require("./src/routes/OrderRoute");
 const payment=require("./src/routes/PaymentRoute");
 const addressJson = require("./src/routes/AddressJsonRoute");
 const address=require("./src/routes/AddressRoute");
+const user=require("./src/routes/UserRoute")
+
 const app = express();
 app.use(cookieParser()); // ✅ BẮT BUỘC, TOÀN APP
 
@@ -61,6 +63,8 @@ app.use("/api/orders", order);
 app.use("/api/payments",payment);
 app.use("/api/addressJson", addressJson);
 app.use("/api/addresses",address);
+app.use("/api/user",user);
+
 app.listen(3000, () =>
   console.log("Server running at http://localhost:3000")
 );

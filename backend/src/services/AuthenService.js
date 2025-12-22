@@ -1,4 +1,4 @@
-const AuthenModel = require("../models/AuthenModel");
+const UserModel = require("../models/UserModel");
 const OrderModel = require("../models/OrderModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -10,7 +10,7 @@ class AuthenService {
   static async login(email, password) {
     if (!email || !password) throw new Error("Email và mật khẩu là bắt buộc");
 
-    const user = await AuthenModel.getUserByEmail(email);
+    const user = await UserModel.getUserByEmail(email);
     if (!user || user.user_account_status !== "active") return null;
 
 
@@ -62,14 +62,14 @@ class AuthenService {
     if (password.length < 6) return { error: "Mật khẩu phải ít nhất 6 ký tự!" };
 
     // 6. Check email đã tồn tại chưa
-    const exist = await AuthenModel.getUserByEmail(email);
+    const exist = await UserModel.getUserByEmail(email);
     if (exist) return { error: "Email đã tồn tại!" };
 
     // 7. Hash password
     const password_hash = await bcrypt.hash(password, 10);
 
     // 8. Lưu vào DB
-    await AuthenModel.createUser({
+    await UserModel.createUser({
       email,
       password_hash,
       first_name,
@@ -94,7 +94,7 @@ class AuthenService {
     res.clearCookie("token");
   }
   static async getUserById(userId) {
-    const user = await AuthenModel.getUserById(userId);
+    const user = await UserModel.getUserById(userId);
     if (!user) return null;
 
     return {
