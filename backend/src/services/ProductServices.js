@@ -1,7 +1,6 @@
-const ProductModel = require("../models/ProductModel");
+const ProductModel = require("../models/productModel");
 const ImagesService = require("./ImagesServices");
 const ProductImagesModel = require("../models/ProductImagesModel");
-
 
 class ProductService {
   static async getAllProducts() {
@@ -19,19 +18,15 @@ class ProductService {
     return productId;
   }
 
-  static async getByCode(data){
-       const existedTotal = await ProductModel.getByCode(data.product_code);
+  static async getByCode(data) {
+    const existedTotal = await ProductModel.getByCode(data.product_code);
 
-        return existedTotal;
+    return existedTotal;
   }
-
-
-
 
   static async getfilterByParentOfChild(id) {
     return await ProductModel.filterByParentOfChild(id);
   }
-
 
   static async updateProduct(id, data, files) {
     const { images, ...productData } = data;
@@ -56,9 +51,12 @@ class ProductService {
     if (!deleted) throw new Error("Product not found");
     return deleted;
   }
-
+  // ProductServices.js
+  static async getProductDetailWithImages(id) {
+    const product = await ProductModel.getDetailWithImages(id);
+    if (!product) throw new Error("Product not found");
+    return product;
+  }
 }
 
 module.exports = ProductService;
-
-

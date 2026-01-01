@@ -1,6 +1,6 @@
 // product.js
 import axios from "axios";
-import { formatProducts } from "../helpers/formatProduct";
+import { formatProductDetail, formatProducts } from "../helpers/formatProduct";
 export async function getProducts() {
   try {
     const res = await axios.get("http://localhost:3000/api/products");
@@ -23,14 +23,16 @@ export async function filterProducts(id) {
     return []; // trả về mảng rỗng thay vì undefined
   }
 }
+
+// productService.js
 export async function getDetail(id) {
   try {
-    const res= await axios.get(`http://localhost:3000/api/products/${id}`)
-    const rows=res.data
-    return formatProducts(rows)
+    const res = await axios.get(
+      `http://localhost:3000/api/products/detail/${id}`
+    );
+    return formatProductDetail(res.data);
   } catch (error) {
-        console.error("Lỗi khi load chi tiet sản phẩm:", error);
-        return {};
+    console.error("Lỗi khi load chi tiết sản phẩm:", error);
+    return {};
   }
-  
 }

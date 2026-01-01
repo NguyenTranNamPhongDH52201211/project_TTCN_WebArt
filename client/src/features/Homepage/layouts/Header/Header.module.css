@@ -87,3 +87,31 @@ cursor: pointer;
 .login-button:active {
   transform: scale(0.96);
 }
+/* ===== TOOLTIP ===== */
+.tooltipWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: -38px; /* hiện dưới icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #111;
+  color: #fff;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.tooltipWrap:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(4px);
+}

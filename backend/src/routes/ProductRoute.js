@@ -12,6 +12,7 @@ router.post("/",upload.array("images",5),validateProduct, ProductController.crea
 router.put("/:id",upload.array("images",5),validateProduct, ProductController.update);
 router.delete("/:id", ProductController.delete);
 router.get("/check/:code", ProductController.checkProductCode);
+router.get("/detail/:id", ProductController.getDetailWithImages);
 
 
 module.exports = router;

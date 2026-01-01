@@ -18,6 +18,7 @@ import PersonalInfo from "./features/Profile/components/PersonalInfo";
 import Signup from "./features/authen/pages/Signup";
 import OrderPreview from "./features/Cart/pages/OrderPreview";
 import OrderSuccess from "./features/Cart/pages/OrderSuccess";
+import OrderHistory from "./features/Order/pages/OrderHistory";
 function App() {
   return (
     <Routes>
@@ -48,6 +49,10 @@ function App() {
         <Route path="/forminfocart" element={<FormInfo />}></Route>
         <Route path="/order-preview" element={<OrderPreview />} />
         <Route path="/order-success" element={<OrderSuccess />} />
+        {/* <Order></Order> */}
+
+         <Route path="/order-history" element={<OrderHistory />} />
+
       </Route>
     </Routes>
   );

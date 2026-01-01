@@ -4,6 +4,8 @@ import logo from "../../../assets/logo/logo.png";
 import { CiLock } from "react-icons/ci";
 import { IoPerson } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 import { FaFacebook } from "react-icons/fa6";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,6 +15,8 @@ export default function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -75,12 +79,20 @@ export default function Login() {
           <div className={styles.text}>Nhập mật khẩu</div>
           <div className={styles.input}>
             <CiLock />
-            <input
-              type="password"
-              placeholder="Mật khẩu"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+         <input
+  type={showPassword ? "text" : "password"}
+  placeholder="Mật khẩu"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+/>
+
+<span
+  className={styles.eye}
+  onClick={() => setShowPassword(!showPassword)}
+>
+  {showPassword ? <FaEyeSlash /> : <FaEye />}
+</span>
+
           </div>
 
           <div className={styles.options}>

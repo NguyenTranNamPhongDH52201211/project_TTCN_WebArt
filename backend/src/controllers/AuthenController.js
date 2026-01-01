@@ -56,6 +56,56 @@ class AuthenController {
     AuthenService.logout(res);
     res.json({ message: "Đăng xuất thành công" });
   }
+  // update profile
+  static async updateProfile(req, res) {
+    try {
+      const user = await AuthenService.updateProfile(req.userId, req.body);
+
+      res.json({
+        message: "Update profile successfully",
+        user,
+      });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  }
+
+  // update password
+  static async updatePassword(req, res) {
+    try {
+      const { oldPassword, newPassword } = req.body;
+
+      await AuthenService.updatePassword(req.userId, oldPassword, newPassword);
+
+      res.json({ message: "Change password successfully" });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  }
+  static async sendResetPasswordOTP(req, res) {
+    try {
+      const { email } = req.body;
+      await AuthenService.sendResetPasswordOTP(email);
+
+      res.json({ message: "Nếu email tồn tại, mã OTP đã được gửi" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+
+  // Xác nhận OTP và đặt mật khẩu mới
+  static async resetPassword(req, res) {
+    try {
+      const { email, otp, newPassword } = req.body;
+      const userId = await AuthenService.verifyResetPasswordOTP(email, otp);
+      await AuthenService.resetPassword(userId, newPassword);
+
+      res.json({ message: "Đặt lại mật khẩu thành công!" });
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  }
 }
 
 module.exports = AuthenController;

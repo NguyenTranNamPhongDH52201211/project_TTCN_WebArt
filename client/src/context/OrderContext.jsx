@@ -11,31 +11,30 @@ export const useOrder = () => useContext(OrderContext);
 
 export const OrderProvider = ({ children }) => {
   const { user, loading } = useAuth();
-  const [orders, setOrders] = useState([]); 
-  const [selectedOrder, setSelectedOrder] = useState(null); 
+  const [orders, setOrders] = useState([]);
+  const [selectedOrder, setSelectedOrder] = useState(null);
   const [loadingOrder, setLoadingOrder] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+  const loadOrders = async (status = "all") => {
     if (!user?.user_id) return;
 
-    const loadOrders = async () => {
-      setLoadingOrder(true);
-      setError(null);
-      try {
-        const data = await getOrderHistoryByUser(user.user_id);
-        setOrders(data);
-      } catch (err) {
-        console.error("Load order history error:", err);
-        setError(err.response?.data?.message || "Không tải được lịch sử đơn hàng");
-      } finally {
-        setLoadingOrder(false);
-      }
-    };
+    setLoadingOrder(true);
+    setError(null);
+    try {
+      const data = await getOrderHistoryByUser(user.user_id, status);
+      setOrders(data);
+    } catch (err) {
+      console.error(err);
+      setError("Không tải được lịch sử đơn hàng");
+    } finally {
+      setLoadingOrder(false);
+    }
+  };
 
+  useEffect(() => {
     loadOrders();
   }, [user]);
-
 
   const fetchOrderDetail = async (orderId) => {
     setLoadingOrder(true);
@@ -45,10 +44,15 @@ export const OrderProvider = ({ children }) => {
       setSelectedOrder(data);
     } catch (err) {
       console.error("Fetch order detail error:", err);
-      setError(err.response?.data?.message || "Không lấy được chi tiết đơn hàng");
+      setError(
+        err.response?.data?.message || "Không lấy được chi tiết đơn hàng"
+      );
     } finally {
       setLoadingOrder(false);
     }
+  };
+  const closeOrderDetail = () => {
+    setSelectedOrder(null);
   };
 
   const checkout = async (orderData, items) => {
@@ -72,12 +76,12 @@ export const OrderProvider = ({ children }) => {
     } catch (err) {
       console.error("Checkout error:", err);
       setError(err.response?.data?.message || "Tạo đơn hàng thất bại");
-      throw err; 
+      throw err;
     } finally {
       setLoadingOrder(false);
     }
   };
-  if (loading) return null; 
+  if (loading) return null;
 
   return (
     <OrderContext.Provider
@@ -85,9 +89,11 @@ export const OrderProvider = ({ children }) => {
         orders,
         selectedOrder,
         fetchOrderDetail,
+        closeOrderDetail,
         checkout,
         loadingOrder,
         error,
+        loadOrders,
       }}
     >
       {children}

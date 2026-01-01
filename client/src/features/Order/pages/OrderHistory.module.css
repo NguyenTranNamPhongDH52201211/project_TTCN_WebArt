@@ -1,0 +1,339 @@
+/* Wrapper chính cho page */
+.appWrapper {
+  min-width: 1300px;
+  height: 100vh;        /* chiếm toàn bộ viewport theo chiều cao */
+  font-family: sans-serif;
+  padding: 0;
+  background-color: #f9f9f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;  /* căn giữa nội dung theo ngang */
+}
+
+/* Main content */
+.mainContent {
+  width: 80%;            /* chiếm 80% chiều ngang */
+  min-height: 80vh;      /* tùy chọn, để chiếm ít nhất 80% chiều cao */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+/* Header trang */
+.pageHeader {
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+.headerTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerEmoji {
+  font-size: 28px;
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.welcomeText {
+  color: #555;
+  margin-top: 4px;
+}
+
+/* Navigation tabs */
+.tabsNav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+/* Tab button mặc định */
+.tabButton {
+  padding: 8px 12px;
+  border: none;
+  background-color: #fff; /* trắng nền */
+  color: #000; /* chữ đen */
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  flex: 1;  /* mỗi tab chiếm đều */
+  text-align: center;
+}
+
+/* Tab button hover */
+.tabButton:hover {
+  background-color: #3b82f6; /* xanh nền */
+  color: #fff; /* chữ trắng */
+}
+
+/* Tab đang active */
+.tabActive {
+  background-color: #3b82f6; /* xanh nền */
+  color: #fff; /* chữ trắng */
+}
+
+/* Danh sách đơn hàng */
+.ordersList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;               /* chiếm hết chiều cao còn lại */
+  overflow-y: auto;      /* nếu nhiều đơn hàng sẽ scroll */
+}
+
+
+/* Card đơn hàng */
+.orderCard {
+  border-left: 4px solid;
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.2s ease;
+}
+
+.orderCard:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.orderInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.orderTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orderIcon {
+  font-size: 18px;
+}
+
+.orderNumber {
+  font-weight: 600;
+}
+
+.orderProducts,
+.orderMeta {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Phần giá và trạng thái */
+.orderPriceSection {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.orderAmount {
+  font-weight: 600;
+}
+
+.statusBadge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Khi modal mở */
+.modalActive {
+  display: flex;
+}
+
+/* Modal Content */
+.modalContent {
+  background: #fff;
+  padding: 24px;
+  border-radius: 12px;
+  width: 80%;         
+  max-width: 80%;
+  max-height: 80vh;   
+  min-width: 400px;   
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Modal Header */
+.modalHeader {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.modalHeaderContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+/* Modal Body */
+.modalBody {
+  font-size: 16px;
+  color: #555;
+  flex: 1;                 
+  overflow-y: auto;        
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Timeline trong modal */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;                 
+  overflow-y: auto;
+}
+
+.timelineItem {
+  display: flex;
+  gap: 16px;
+}
+
+.timelineIcon {
+  font-size: 28px;
+  min-width: 32px;
+}
+
+.timelineContent {
+  flex: 1;
+  font-size: 16px;
+}
+
+.timelineDate {
+  font-size: 14px;
+  color: #888;
+}
+
+/* Danh sách sản phẩm trong modal */
+.productList {
+  margin-top: 16px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+  flex: 1;                 
+  overflow-y: auto;
+}
+
+.productItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.productName {
+  font-weight: 600;
+}
+
+.productQty {
+  color: #555;
+}
+
+.productPrice {
+  font-weight: 600;
+}
+
+/* Empty state khi không có đơn */
+.emptyState {
+  text-align: center;
+  padding: 32px;
+  color: #555;
+}
+
+.emptyIcon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+
+.emptyTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.emptyDescription {
+  margin-bottom: 12px;
+}
+
+.shopBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #3b82f6;
+  color: #fff;
+  cursor: pointer;
+  font-weight: 500;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px 0;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  background: #f1f5f9;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.activePage {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}

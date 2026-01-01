@@ -16,8 +16,21 @@ export function ProductProvider({ id, children }) {
     async function load() {
       try {
         const data = await getDetail(id);
-        setItem(data);
-        setMainImage(data.image && data.image.length > 0 ? data.image[0] : null);
+
+        const images = Array.isArray(data.image)
+          ? data.image
+          : typeof data.image === "string"
+          ? data.image.split(",")
+          : [];
+
+        setItem({
+          ...data,
+          image: images,
+        });
+        console.log("DETAIL RAW:", data);
+        console.log("IMAGES:", images);
+
+        setMainImage(images[0] || null);
       } catch (error) {
         console.error("Lỗi khi load chi tiết sản phẩm:", error);
       } finally {
@@ -29,8 +42,8 @@ export function ProductProvider({ id, children }) {
 
   const imageArrRand = item?.image?.slice(1, 5) || [];
 
-  const handleIncrease = () => setQuantity(prev => prev + 1);
-  const handleDecrease = () => setQuantity(prev => Math.max(prev - 1, 1));
+  const handleIncrease = () => setQuantity((prev) => prev + 1);
+  const handleDecrease = () => setQuantity((prev) => Math.max(prev - 1, 1));
 
   const value = {
     item,
@@ -45,5 +58,7 @@ export function ProductProvider({ id, children }) {
     loading,
   };
 
-  return <ProductContext.Provider value={value}>{children}</ProductContext.Provider>;
+  return (
+    <ProductContext.Provider value={value}>{children}</ProductContext.Provider>
+  );
 }

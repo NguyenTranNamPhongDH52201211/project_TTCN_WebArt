@@ -103,6 +103,32 @@ class OrderModel {
       [userId, email]
     );
   }
+  // OrderModel.js
+static async getHistoryByUserIdAndStatus(user_id, status) {
+  let sql = `
+    SELECT 
+      order_id,
+      order_number,
+      order_total_amount,
+      order_status,
+      order_payment_status,
+      order_created_at
+    FROM Orders
+    WHERE order_user_id = ?
+  `;
+  const params = [user_id];
+
+  if (status && status !== "all") {
+    sql += ` AND order_status = ?`;
+    params.push(status);
+  }
+
+  sql += ` ORDER BY order_created_at DESC`;
+
+  const [rows] = await db.execute(sql, params);
+  return rows;
+}
+
 }
 
 module.exports = OrderModel;

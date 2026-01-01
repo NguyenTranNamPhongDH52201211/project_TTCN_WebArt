@@ -1,59 +1,83 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../../../context/AuthContext";
 import styles from "./Forgot.module.css";
-import React, { useState } from "react";
-import { users } from "../../../api/userAccount";
 
 export default function Forgot() {
+  const { sendResetPasswordOtp, resetPassword } = useAuth();
+
+  const [step, setStep] = useState(1); // 1: nhập email, 2: nhập OTP + mật khẩu mới
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [message, setMessage] = useState("");
 
-  const handleForgot = (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
+    if (!email) return setMessage("Vui lòng nhập email");
 
-    if (!email) {
-      setMessage("Vui lòng nhập email!");
-      return;
+    try {
+      const msg = await sendResetPasswordOtp(email);
+      setMessage(msg);
+      setStep(2);
+    } catch (err) {
+      setMessage(err);
     }
+  };
 
-    // Kiểm tra trong mảng users ảo
-    let found = users.find((u) => u.email === email);
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!otp || !newPassword) return setMessage("Vui lòng nhập OTP và mật khẩu mới");
 
-    // Kiểm tra user đăng ký từ localStorage
-    if (!found) {
-      const registeredUser = JSON.parse(localStorage.getItem("registeredUser"));
-      if (registeredUser && registeredUser.email === email) {
-        found = registeredUser;
-      }
-    }
-
-    if (!found) {
-      setMessage("Email không tồn tại!");
-    } else {
-      // Hiển thị mật khẩu (chỉ demo)
-      setMessage(`Mật khẩu của bạn là: ${found.password}`);
+    try {
+      const msg = await resetPassword(email, otp, newPassword);
+      setMessage(msg);
+      setStep(1);
+      setEmail("");
+      setOtp("");
+      setNewPassword("");
+    } catch (err) {
+      setMessage(err);
     }
   };
 
   return (
     <div className={styles["forgot-container"]}>
       <h2 className={styles["title"]}>Quên mật khẩu</h2>
-      <form onSubmit={handleForgot}>
-        <label className={styles["label"]}>Nhập email của bạn</label>
-        <input
-          className={styles["input"]}
-          type="text"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <button className={styles["button"]} type="submit">
-          Lấy lại mật khẩu
-        </button>
-        {message && <p className={styles["message"]}>{message}</p>}
-        <Link className={styles["link"]} to="/login">
-          Quay lại đăng nhập
-        </Link>
-      </form>
+
+      {step === 1 && (
+        <form onSubmit={handleSendOtp}>
+          <input
+            type="text"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className={styles["input"]}
+          />
+          <button type="submit" className={styles["button"]}>Gửi OTP</button>
+        </form>
+      )}
+
+      {step === 2 && (
+        <form onSubmit={handleResetPassword}>
+          <input
+            type="text"
+            placeholder="Nhập OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            className={styles["input"]}
+          />
+          <input
+            type="password"
+            placeholder="Mật khẩu mới"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            className={styles["input"]}
+          />
+          <button type="submit" className={styles["button"]}>Đặt lại mật khẩu</button>
+        </form>
+      )}
+
+      {message && <p className={styles["message"]}>{message}</p>}
     </div>
   );
 }

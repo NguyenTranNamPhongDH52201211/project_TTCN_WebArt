@@ -21,7 +21,6 @@ class OrderController {
       const result = await OrderService.createOrder(
         {
           ...order,
-          order_user_id: req.userId || null, // ⭐ CHÌA KHÓA
         },
         items
       );
@@ -54,7 +53,13 @@ class OrderController {
   static async getOrderHistory(req, res) {
     try {
       const user_id = req.params.user_id;
-      const orders = await OrderService.getOrderHistory(user_id);
+      const { status } = req.query; // ⭐ từ FE
+
+      const orders = await OrderService.getOrderHistory(
+        user_id,
+        status || "all"
+      );
+
       res.json(orders);
     } catch (err) {
       res.status(400).json({ message: err.message });

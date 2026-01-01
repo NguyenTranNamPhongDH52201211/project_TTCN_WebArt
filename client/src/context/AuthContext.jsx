@@ -1,5 +1,14 @@
 import { createContext, useState, useEffect, useContext } from "react";
-import { fetchMe, signupApi, loginApi, logoutApi } from "../api/authenService";
+import {
+  fetchMe,
+  signupApi,
+  loginApi,
+  logoutApi,
+  updateProfileApi,
+  changePasswordApi,
+  sendResetPasswordOtpApi,
+  resetPasswordApi,
+} from "../api/authenService";
 
 import { auth, googleProvider, facebookProvider } from "./firebase";
 import { signInWithPopup } from "firebase/auth";
@@ -11,7 +20,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // ⭐ THÊM
 
-  
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -19,14 +27,13 @@ export const AuthProvider = ({ children }) => {
         if (res.data.user) setUser(res.data.user);
       } catch (err) {
         setUser(null);
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     };
     loadUser();
   }, []);
 
-  
   const signup = async (name, email, password, tel) => {
     const first_name = name.split(" ")[0];
     const last_name = name.split(" ").slice(1).join(" ");
@@ -43,13 +50,14 @@ export const AuthProvider = ({ children }) => {
     return res.data;
   };
 
- 
   const login = async (email, password) => {
-    const res = await loginApi(email.trim(), password.trim());
+    await loginApi(email.trim(), password.trim());
+
+    const res = await fetchMe();
     setUser(res.data.user);
+
     return res.data.user;
   };
-
 
   const loginWithGoogle = async () => {
     const result = await signInWithPopup(auth, googleProvider);
@@ -66,7 +74,6 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
     return userData;
   };
-
 
   const loginWithFacebook = async () => {
     facebookProvider.addScope("email");
@@ -91,17 +98,60 @@ export const AuthProvider = ({ children }) => {
     await logoutApi();
     setUser(null);
   };
+  const updateProfile = async (body) => {
+    const res = await updateProfileApi(body);
+
+    if (res.data.user) {
+      setUser(res.data.user); // ⭐ cập nhật lại context
+    }
+
+    return res.data.user;
+  };
+  const changePassword = async (oldPassword, newPassword) => {
+    try {
+      const res = await changePasswordApi({
+        oldPassword,
+        newPassword,
+      });
+
+      return res.data.message;
+    } catch (err) {
+      console.error("Change password error:", err);
+      throw err;
+    }
+  };
+  const sendResetPasswordOtp = async (email) => {
+    try {
+      const res = await sendResetPasswordOtpApi(email);
+      return res.data.message; // "Nếu email tồn tại, mã OTP đã được gửi"
+    } catch (err) {
+      throw err.response?.data?.message || "Server error";
+    }
+  };
+
+  const resetPassword = async (email, otp, newPassword) => {
+    try {
+      const res = await resetPasswordApi({ email, otp, newPassword });
+      return res.data.message; // "Đặt lại mật khẩu thành công!"
+    } catch (err) {
+      throw err.response?.data?.message || "Server error";
+    }
+  };
 
   return (
     <AuthContext.Provider
       value={{
         user,
         login,
-        loading, 
+        loading,
         signup,
         loginWithGoogle,
         loginWithFacebook,
         logout,
+        updateProfile,
+        changePassword,
+        sendResetPasswordOtp,
+        resetPassword
       }}
     >
       {children}

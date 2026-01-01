@@ -25,3 +25,21 @@ export function formatProducts(rows) {
   }
 
 }
+// helpers/formatProductDetail.js
+export function formatProductDetail(p) {
+  return {
+    id: p.product_id,
+    name: p.product_name,
+    code: p.product_code,
+    price: p.product_base_price,
+    brand: p.product_brand,
+    category: p.category_name,
+    colors: [],
+    image: Array.isArray(p.image)
+      ? p.image
+      : typeof p.image === "string"
+      ? p.image.split(",")
+      : [],
+  };
+}
+

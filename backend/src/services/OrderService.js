@@ -62,10 +62,29 @@ class OrderService {
   }
 
   // Lấy lịch sử đơn hàng
-  static async getOrderHistory(user_id) {
-    if (!user_id) throw new Error("user_id is required");
-    return await OrderModel.getHistoryByUserId(user_id);
+  // OrderService.js
+static async getOrderHistory(user_id, status = "all") {
+  if (!user_id) throw new Error("user_id is required");
+
+  const validStatus = [
+    "pending",
+    "confirmed",
+    "processing",
+    "shipped",
+    "delivered",
+    "cancelled",
+    "refunded",
+    "all",
+  ];
+
+  if (!validStatus.includes(status)) {
+    throw new Error("Trạng thái không hợp lệ");
   }
+
+  return await OrderModel.getHistoryByUserIdAndStatus(user_id, status);
+}
+
+
 }
 
 module.exports = OrderService;

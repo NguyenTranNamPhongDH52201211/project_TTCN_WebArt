@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import styles from "./PersonalInfo.module.css";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { updateProfileApi } from "../../../api/authenService";
+
 export default function PersonalInfo() {
   const navigate = useNavigate();
-  const { user, loading, logout, setUser } = useAuth();
+  const { user, loading, logout, updateProfile } = useAuth();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -16,7 +16,7 @@ export default function PersonalInfo() {
   const [isEditing, setIsEditing] = useState(false);
   const [showDialog, setShowDialog] = useState(false);
 
-  // Load dữ liệu từ AuthContext (DB)
+  // Load dữ liệu từ AuthContext
   useEffect(() => {
     if (user) {
       setFirstName(user.user_first_name || "");
@@ -35,19 +35,20 @@ export default function PersonalInfo() {
   };
 
   const onSave = async () => {
-    const body = {
-      first_name: firstName,
-      last_name: lastName,
-      phone: tel,
-    };
+    try {
+      await updateProfile({
+        first_name: firstName,
+        last_name: lastName,
+        phone: tel,
+        email: email,
+      });
 
-    const res = await updateProfileApi(body);
-
-    // 🔥 Update lại AuthContext
-    setUser(res.data.user);
-
-    setIsEditing(false);
-    setShowDialog(true);
+      setIsEditing(false);
+      setShowDialog(true);
+    } catch (err) {
+      console.error("Update profile error:", err);
+      alert("Cập nhật thất bại");
+    }
   };
 
   const onLogoutClick = async () => {
@@ -96,10 +97,13 @@ export default function PersonalInfo() {
           readOnly={!isEditing}
         />
       </div>
-
       <div className={styles["form-group"]}>
         <label>Email</label>
-        <input value={email} readOnly />
+        <input
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          readOnly={!isEditing} 
+        />
       </div>
 
       <div className={styles["form-group"]}>

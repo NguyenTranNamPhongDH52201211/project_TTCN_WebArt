@@ -10,9 +10,11 @@ const axiosClient = axios.create({
 });
 
 
-export const getOrderHistoryByUser = async (userId) => {
-  const res = await axiosClient.get(`/orders/history/${userId}`);
-  return res.data; 
+export const getOrderHistoryByUser = async (userId, status = "all") => {
+  const res = await axiosClient.get(
+    `/orders/history/${userId}?status=${status}`
+  );
+  return res.data;
 };
 
 export const getOrderDetail = async (orderId) => {

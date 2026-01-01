@@ -120,6 +120,18 @@ class ProductController {
       res.status(500).json({ message: err.message });
     }
   }
+  // ProductController.js
+static async getDetailWithImages(req, res) {
+  try {
+    const product = await ProductService.getProductDetailWithImages(
+      req.params.id
+    );
+    res.json(product);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+}
+
 }
 
 module.exports = ProductController;

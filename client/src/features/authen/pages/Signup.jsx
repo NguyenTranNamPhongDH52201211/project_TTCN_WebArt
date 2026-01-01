@@ -1,8 +1,11 @@
 import styles from "./Signup.module.css";
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import {useAuth } from "../../../context/AuthContext";
-
+import { useAuth } from "../../../context/AuthContext";
+import {
+  getPasswordRules,
+  checkPasswordStrength,
+} from "../../../utils/passwordUtils";
 export default function Signup() {
   const navigate = useNavigate();
   const { signup } = useAuth();
@@ -33,39 +36,12 @@ export default function Signup() {
     number: false,
     special: false,
   });
-  const getPasswordRules = (pwd) => {
-    return {
-      length6: pwd.length >= 6,
-      length8: pwd.length >= 8,
-      lower: /[a-z]/.test(pwd),
-      upper: /[A-Z]/.test(pwd),
-      number: /[0-9]/.test(pwd),
-      special: /[^A-Za-z0-9]/.test(pwd),
-    };
-  };
-
-  // Đánh giá mật khẩu
-  const checkPasswordStrength = (pwd) => {
-    let score = 0;
-
-    if (pwd.length >= 6) score++; // Đủ dài tối thiểu
-    if (pwd.length >= 8) score++; // Dài tốt
-    if (/[a-z]/.test(pwd)) score++; // Chữ thường
-    if (/[A-Z]/.test(pwd)) score++; // Chữ hoa
-    if (/[0-9]/.test(pwd)) score++; // Số
-    if (/[^A-Za-z0-9]/.test(pwd)) score++; // Ký tự đặc biệt
-
-    if (score <= 2) return "Yếu";
-    if (score <= 4) return "Trung bình";
-    return "Mạnh";
-  };
 
   const handlePasswordChange = (e) => {
     const pwd = e.target.value;
     setPassword(pwd);
     setPasswordStrength(checkPasswordStrength(pwd));
     setRules(getPasswordRules(pwd)); // ← cập nhật từng tiêu chí
-    
   };
 
   const handleSignup = (e) => {

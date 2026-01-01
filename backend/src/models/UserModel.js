@@ -49,7 +49,7 @@ class UserModel {
     return rows[0] || null;
   }
 
-   static async getAll() {
+  static async getAll() {
     const [rows] = await db.execute(`
     SELECT 
       user_id,
@@ -66,7 +66,6 @@ class UserModel {
     return rows;
   }
 
-
   static async getById(user_id) {
     const [rows] = await db.execute(
       "SELECT * FROM Users WHERE user_id = ? LIMIT 1",
@@ -78,24 +77,25 @@ class UserModel {
 
   static async updateProfile(user_id, data) {
     const sql = `
-      UPDATE Users SET
-        user_first_name = ?,
-        user_last_name = ?,
-        user_phone = ?
-      WHERE user_id = ?
-    `;
+    UPDATE Users SET
+      user_email = ?,
+      user_first_name = ?,
+      user_last_name = ?,
+      user_phone = ?
+    WHERE user_id = ?
+  `;
 
     const values = [
+      data.email,
       data.user_first_name,
       data.user_last_name,
       data.user_phone,
-      user_id
+      user_id,
     ];
 
     const [result] = await db.execute(sql, values);
     return result.affectedRows > 0;
   }
-
 
   static async updatePassword(user_id, user_password_hash) {
     const [result] = await db.execute(
@@ -113,7 +113,6 @@ class UserModel {
     );
   }
 
-
   static async verifyEmail(user_id) {
     const [result] = await db.execute(
       "UPDATE Users SET user_email_verified = true WHERE user_id = ?",
@@ -122,7 +121,6 @@ class UserModel {
 
     return result.affectedRows > 0;
   }
-
 
   static async updateStatus(user_id, user_account_status) {
     const [result] = await db.execute(
@@ -150,6 +148,15 @@ class UserModel {
 
     return result.affectedRows > 0;
   }
+  static async updateOtp(user_id, otp, otp_expires) {
+  const [result] = await db.execute(
+    "UPDATE Users SET reset_password_otp = ?, otp_expires = ? WHERE user_id = ?",
+    [otp, otp_expires, user_id]
+  );
+
+  return result.affectedRows > 0;
+}
+
 }
 
 module.exports = UserModel;

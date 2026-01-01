@@ -9,7 +9,12 @@ export const fetchMe = () => {
   });
 };
 export const updateProfileApi = (body) => {
-  return axios.put(`${API_URL}/me`, body, {
+  return axios.put(`${API_URL}/me/profile`, body, {
+    withCredentials: true,
+  });
+};
+export const changePasswordApi = (body) => {
+  return axios.put(`${API_URL}/me/password`, body, {
     withCredentials: true,
   });
 };
@@ -34,4 +39,13 @@ export const logoutApi = () => {
     {},
     { withCredentials: true }
   );
+};
+// gửi OTP quên mật khẩu
+export const sendResetPasswordOtpApi = (email) => {
+  return axios.post(`${API_URL}/forgot-password`, { email });
+};
+
+// đặt lại mật khẩu
+export const resetPasswordApi = ({ email, otp, newPassword }) => {
+  return axios.post(`${API_URL}/reset-password`, { email, otp, newPassword });
 };

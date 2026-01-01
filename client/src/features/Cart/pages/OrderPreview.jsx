@@ -252,8 +252,8 @@ export default function OrderPreview() {
             </div>
           </label>
 
-          {/* VNPAY */}
-          <label
+        
+          {/* <label
             className={`${styles["payment-option"]} ${
               paymentMethod === "vnpay" ? styles["active"] : ""
             }`}
@@ -273,7 +273,7 @@ export default function OrderPreview() {
             </div>
           </label>
 
-          {/* MOMO */}
+        
           <label
             className={`${styles["payment-option"]} ${
               paymentMethod === "momo" ? styles["active"] : ""
@@ -290,7 +290,7 @@ export default function OrderPreview() {
               <span className={styles["payment-title"]}>MoMo</span>
               <span className={styles["payment-desc"]}>Ví điện tử MoMo</span>
             </div>
-          </label>
+          </label> */}
         </div>
       </div>
 
